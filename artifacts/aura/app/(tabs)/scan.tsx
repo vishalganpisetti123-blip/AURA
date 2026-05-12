@@ -1,7 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
-import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -16,17 +15,20 @@ import {
   TextInput,
   View,
 } from "react-native";
+import Animated, {
+  FadeIn,
+  FadeOut,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useWardrobe } from "@/context/WardrobeContext";
 import { useColors } from "@/hooks/useColors";
 import { AnalyzedClothing, ClothingItem } from "@/types/wardrobe";
 
-type Step = "pick" | "preview" | "analyzing" | "result" | "review";
+type Step = "pick" | "preview" | "analyzing" | "result";
 
 export default function ScanScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const router = useRouter();
   const { addItem } = useWardrobe();
 
   const [step, setStep] = useState<Step>("pick");
@@ -35,16 +37,15 @@ export default function ScanScreen() {
   const [analysis, setAnalysis] = useState<AnalyzedClothing | null>(null);
   const [editedName, setEditedName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [successCount, setSuccessCount] = useState(0);
 
-  const topPad =
-    Platform.OS === "web" ? 67 + 16 : insets.top + 16;
+  const topPad = Platform.OS === "web" ? 67 + 16 : insets.top + 16;
 
   const pickImage = async (useCamera: boolean) => {
     try {
       let result: ImagePicker.ImagePickerResult;
       if (useCamera) {
-        const { status } =
-          await ImagePicker.requestCameraPermissionsAsync();
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
         if (status !== "granted") {
           Alert.alert(
             "Camera access needed",
@@ -75,7 +76,7 @@ export default function ScanScreen() {
         setImageBase64(asset.base64 ?? null);
         setStep("preview");
       }
-    } catch (e) {
+    } catch {
       Alert.alert("Error", "Failed to pick image. Please try again.");
     }
   };
@@ -89,17 +90,14 @@ export default function ScanScreen() {
       const response = await fetch(`${baseUrl}/api/wardrobe/analyze`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          imageBase64,
-          mimeType: "image/jpeg",
-        }),
+        body: JSON.stringify({ imageBase64, mimeType: "image/jpeg" }),
       });
       if (!response.ok) throw new Error("Analysis failed");
       const data: AnalyzedClothing = await response.json();
       setAnalysis(data);
       setEditedName(data.name);
       setStep("result");
-    } catch (_) {
+    } catch {
       Alert.alert(
         "Analysis failed",
         "Could not analyze this image. Please try again.",
@@ -108,10 +106,19 @@ export default function ScanScreen() {
     }
   };
 
+  const reset = () => {
+    setStep("pick");
+    setImageUri(null);
+    setImageBase64(null);
+    setAnalysis(null);
+    setEditedName("");
+  };
+
   const addToWardrobe = async () => {
     if (!analysis || !imageUri) return;
     setIsSaving(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
     const item: ClothingItem = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       name: editedName || analysis.name,
@@ -126,17 +133,12 @@ export default function ScanScreen() {
       imageUri,
       addedAt: new Date().toISOString(),
     };
+
     await addItem(item);
     setIsSaving(false);
-    router.replace("/(tabs)");
-  };
-
-  const reset = () => {
-    setStep("pick");
-    setImageUri(null);
-    setImageBase64(null);
-    setAnalysis(null);
-    setEditedName("");
+    setSuccessCount((c) => c + 1);
+    // Reset to scan another item immediately
+    reset();
   };
 
   return (
@@ -152,24 +154,34 @@ export default function ScanScreen() {
         )}
         <Text style={[styles.headerTitle, { color: colors.foreground }]}>
           {step === "pick"
-            ? "Add Item"
+            ? "Scan Clothing"
             : step === "analyzing"
-            ? "Analyzing"
-            : step === "result"
-            ? "Review Item"
-            : "Scan Clothing"}
+            ? "Analyzing..."
+            : "Review Item"}
         </Text>
         <View style={{ width: 24 }} />
       </View>
+
+      {/* Success toast */}
+      {successCount > 0 && step === "pick" && (
+        <Animated.View
+          entering={FadeIn.duration(300)}
+          exiting={FadeOut.duration(300)}
+          style={[styles.successBanner, { backgroundColor: colors.primary }]}
+          key={successCount}
+        >
+          <Feather name="check-circle" size={16} color={colors.primaryForeground} />
+          <Text style={[styles.successText, { color: colors.primaryForeground }]}>
+            Added to wardrobe! Scan another item.
+          </Text>
+        </Animated.View>
+      )}
 
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={[
           styles.scrollContent,
-          {
-            paddingBottom:
-              Platform.OS === "web" ? 100 : insets.bottom + 100,
-          },
+          { paddingBottom: Platform.OS === "web" ? 100 : insets.bottom + 100 },
         ]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
@@ -178,19 +190,15 @@ export default function ScanScreen() {
         {step === "pick" && (
           <View style={styles.pickStep}>
             <View
-              style={[
-                styles.illustrationCircle,
-                { backgroundColor: colors.muted },
-              ]}
+              style={[styles.illustrationCircle, { backgroundColor: colors.muted }]}
             >
               <Feather name="camera" size={64} color={colors.mutedForeground} />
             </View>
             <Text style={[styles.pickTitle, { color: colors.foreground }]}>
-              Scan Your Clothing
+              {successCount > 0 ? "Add Another Item" : "Scan Your Clothing"}
             </Text>
             <Text style={[styles.pickSub, { color: colors.mutedForeground }]}>
-              Take a photo or choose from your library. AI will identify and
-              catalog the item automatically.
+              Take a photo or choose from your library. AI will catalog the item automatically.
             </Text>
             <Pressable
               onPress={() => pickImage(true)}
@@ -199,11 +207,7 @@ export default function ScanScreen() {
                 { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 },
               ]}
             >
-              <Feather
-                name="camera"
-                size={20}
-                color={colors.primaryForeground}
-              />
+              <Feather name="camera" size={20} color={colors.primaryForeground} />
               <Text style={[styles.bigBtnText, { color: colors.primaryForeground }]}>
                 Take a Photo
               </Text>
@@ -233,10 +237,7 @@ export default function ScanScreen() {
           <View style={styles.previewStep}>
             <Image
               source={{ uri: imageUri }}
-              style={[
-                styles.previewImage,
-                { borderColor: colors.border },
-              ]}
+              style={[styles.previewImage, { borderColor: colors.border }]}
               resizeMode="cover"
             />
             <View style={styles.previewActions}>
@@ -244,16 +245,11 @@ export default function ScanScreen() {
                 onPress={reset}
                 style={[
                   styles.actionBtn,
-                  {
-                    backgroundColor: colors.secondary,
-                    borderColor: colors.border,
-                  },
+                  { backgroundColor: colors.secondary, borderColor: colors.border },
                 ]}
               >
                 <Feather name="refresh-cw" size={18} color={colors.foreground} />
-                <Text
-                  style={[styles.actionBtnText, { color: colors.foreground }]}
-                >
+                <Text style={[styles.actionBtnText, { color: colors.foreground }]}>
                   Retake
                 </Text>
               </Pressable>
@@ -265,17 +261,8 @@ export default function ScanScreen() {
                   { backgroundColor: colors.primary },
                 ]}
               >
-                <Feather
-                  name="zap"
-                  size={18}
-                  color={colors.primaryForeground}
-                />
-                <Text
-                  style={[
-                    styles.actionBtnText,
-                    { color: colors.primaryForeground },
-                  ]}
-                >
+                <Feather name="zap" size={18} color={colors.primaryForeground} />
+                <Text style={[styles.actionBtnText, { color: colors.primaryForeground }]}>
                   Analyze
                 </Text>
               </Pressable>
@@ -290,26 +277,16 @@ export default function ScanScreen() {
               source={{ uri: imageUri }}
               style={[
                 styles.previewImage,
-                { borderColor: colors.border, opacity: 0.6 },
+                { borderColor: colors.border, opacity: 0.5 },
               ]}
               resizeMode="cover"
             />
             <View style={styles.analyzingOverlay}>
-              <ActivityIndicator
-                size="large"
-                color={colors.primary}
-              />
-              <Text
-                style={[styles.analyzingText, { color: colors.foreground }]}
-              >
+              <ActivityIndicator size="large" color={colors.primary} />
+              <Text style={[styles.analyzingText, { color: colors.foreground }]}>
                 AI is analyzing your item...
               </Text>
-              <Text
-                style={[
-                  styles.analyzingSubText,
-                  { color: colors.mutedForeground },
-                ]}
-              >
+              <Text style={[styles.analyzingSubText, { color: colors.mutedForeground }]}>
                 Identifying type, color, season & style
               </Text>
             </View>
@@ -318,16 +295,11 @@ export default function ScanScreen() {
 
         {/* STEP: Result */}
         {step === "result" && analysis && imageUri && (
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-          >
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined}>
             <View style={styles.resultStep}>
               <Image
                 source={{ uri: imageUri }}
-                style={[
-                  styles.resultImage,
-                  { borderColor: colors.border },
-                ]}
+                style={[styles.resultImage, { borderColor: colors.border }]}
                 resizeMode="cover"
               />
 
@@ -335,15 +307,10 @@ export default function ScanScreen() {
               <View
                 style={[
                   styles.fieldGroup,
-                  {
-                    backgroundColor: colors.card,
-                    borderColor: colors.border,
-                  },
+                  { backgroundColor: colors.card, borderColor: colors.border },
                 ]}
               >
-                <Text
-                  style={[styles.fieldLabel, { color: colors.mutedForeground }]}
-                >
+                <Text style={[styles.fieldLabel, { color: colors.mutedForeground }]}>
                   Name
                 </Text>
                 <TextInput
@@ -359,22 +326,11 @@ export default function ScanScreen() {
               <View
                 style={[
                   styles.detailsCard,
-                  {
-                    backgroundColor: colors.card,
-                    borderColor: colors.border,
-                  },
+                  { backgroundColor: colors.card, borderColor: colors.border },
                 ]}
               >
-                <DetailRow
-                  label="Category"
-                  value={analysis.category}
-                  colors={colors}
-                />
-                <DetailRow
-                  label="Type"
-                  value={analysis.type}
-                  colors={colors}
-                />
+                <DetailRow label="Category" value={analysis.category} colors={colors} />
+                <DetailRow label="Type" value={analysis.type} colors={colors} />
                 <DetailRow
                   label="Color"
                   value={analysis.colorName}
@@ -382,11 +338,7 @@ export default function ScanScreen() {
                   colors={colors}
                 />
                 {analysis.brand && (
-                  <DetailRow
-                    label="Brand"
-                    value={analysis.brand}
-                    colors={colors}
-                  />
+                  <DetailRow label="Brand" value={analysis.brand} colors={colors} />
                 )}
                 <DetailRow
                   label="Season"
@@ -399,20 +351,12 @@ export default function ScanScreen() {
                   colors={colors}
                 />
                 <View style={styles.tagsRow}>
-                  {analysis.tags.map((tag) => (
+                  {analysis.tags.map((tag: string) => (
                     <View
                       key={tag}
-                      style={[
-                        styles.tag,
-                        { backgroundColor: colors.muted },
-                      ]}
+                      style={[styles.tag, { backgroundColor: colors.muted }]}
                     >
-                      <Text
-                        style={[
-                          styles.tagText,
-                          { color: colors.mutedForeground },
-                        ]}
-                      >
+                      <Text style={[styles.tagText, { color: colors.mutedForeground }]}>
                         {tag}
                       </Text>
                     </View>
@@ -432,23 +376,11 @@ export default function ScanScreen() {
                 ]}
               >
                 {isSaving ? (
-                  <ActivityIndicator
-                    size="small"
-                    color={colors.primaryForeground}
-                  />
+                  <ActivityIndicator size="small" color={colors.primaryForeground} />
                 ) : (
                   <>
-                    <Feather
-                      name="plus"
-                      size={18}
-                      color={colors.primaryForeground}
-                    />
-                    <Text
-                      style={[
-                        styles.bigBtnText,
-                        { color: colors.primaryForeground },
-                      ]}
-                    >
+                    <Feather name="plus" size={18} color={colors.primaryForeground} />
+                    <Text style={[styles.bigBtnText, { color: colors.primaryForeground }]}>
                       Add to Wardrobe
                     </Text>
                   </>
@@ -479,11 +411,7 @@ function DetailRow({
         {label}
       </Text>
       <View style={styles.detailValueRow}>
-        {swatch && (
-          <View
-            style={[styles.swatchDot, { backgroundColor: swatch }]}
-          />
-        )}
+        {swatch && <View style={[styles.swatchDot, { backgroundColor: swatch }]} />}
         <Text
           style={[styles.detailValue, { color: colors.foreground }]}
           numberOfLines={1}
@@ -504,10 +432,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 16,
   },
-  headerTitle: {
-    fontSize: 17,
-    fontFamily: "Inter_600SemiBold",
+  headerTitle: { fontSize: 17, fontFamily: "Inter_600SemiBold" },
+  successBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginHorizontal: 20,
+    marginBottom: 12,
+    padding: 12,
+    borderRadius: 12,
   },
+  successText: { fontSize: 13, fontFamily: "Inter_500Medium", flex: 1 },
   scroll: { flex: 1 },
   scrollContent: { padding: 20 },
 
@@ -542,13 +477,8 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 16,
   },
-  secondaryBtn: {
-    borderWidth: 1,
-  },
-  bigBtnText: {
-    fontSize: 16,
-    fontFamily: "Inter_600SemiBold",
-  },
+  secondaryBtn: { borderWidth: 1 },
+  bigBtnText: { fontSize: 16, fontFamily: "Inter_600SemiBold" },
 
   // Preview step
   previewStep: { gap: 16 },
@@ -558,10 +488,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
   },
-  previewActions: {
-    flexDirection: "row",
-    gap: 12,
-  },
+  previewActions: { flexDirection: "row", gap: 12 },
   actionBtn: {
     flex: 1,
     flexDirection: "row",
@@ -573,10 +500,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   primaryActionBtn: { borderWidth: 0 },
-  actionBtnText: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-  },
+  actionBtnText: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
 
   // Analyzing
   analyzingStep: { position: "relative" },
@@ -626,50 +550,22 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_500Medium",
     paddingVertical: 2,
   },
-  detailsCard: {
-    borderRadius: 14,
-    padding: 14,
-    borderWidth: 1,
-    gap: 10,
-  },
+  detailsCard: { borderRadius: 14, padding: 14, borderWidth: 1, gap: 10 },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  detailLabel: {
-    fontSize: 13,
-    fontFamily: "Inter_400Regular",
-  },
-  detailValueRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  swatchDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-  },
+  detailLabel: { fontSize: 13, fontFamily: "Inter_400Regular" },
+  detailValueRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  swatchDot: { width: 14, height: 14, borderRadius: 7 },
   detailValue: {
     fontSize: 13,
     fontFamily: "Inter_500Medium",
     textTransform: "capitalize",
     maxWidth: 200,
   },
-  tagsRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 6,
-    marginTop: 4,
-  },
-  tag: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 20,
-  },
-  tagText: {
-    fontSize: 11,
-    fontFamily: "Inter_400Regular",
-  },
+  tagsRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 4 },
+  tag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
+  tagText: { fontSize: 11, fontFamily: "Inter_400Regular" },
 });

@@ -54,6 +54,27 @@ export type OccasionType =
   | "athletic"
   | "travel";
 
+export interface AnalyzedClothing {
+  name: string;
+  category: string;
+  colorName: string;
+  colorHex: string;
+  type: string;
+  season: string[];
+  occasion: string[];
+  tags: string[];
+  brand?: string | null;
+}
+
+export interface OutfitSuggestion {
+  name: string;
+  itemIds: string[];
+  description: string;
+  tips: string;
+  occasion?: string;
+  weather?: string;
+}
+
 export const CATEGORY_LABELS: Record<ClothingCategory, string> = {
   tops: "Tops",
   bottoms: "Bottoms",
