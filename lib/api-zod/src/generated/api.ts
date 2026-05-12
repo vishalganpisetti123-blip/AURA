@@ -14,3 +14,142 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * @summary List all conversations
+ */
+export const ListOpenaiConversationsResponseItem = zod.object({
+  id: zod.number(),
+  title: zod.string(),
+  createdAt: zod.coerce.date(),
+});
+export const ListOpenaiConversationsResponse = zod.array(
+  ListOpenaiConversationsResponseItem,
+);
+
+/**
+ * @summary Create a new conversation
+ */
+export const CreateOpenaiConversationBody = zod.object({
+  title: zod.string(),
+});
+
+/**
+ * @summary Get conversation with messages
+ */
+export const GetOpenaiConversationParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const GetOpenaiConversationResponse = zod.object({
+  id: zod.number(),
+  title: zod.string(),
+  createdAt: zod.coerce.date(),
+  messages: zod.array(
+    zod.object({
+      id: zod.number(),
+      conversationId: zod.number(),
+      role: zod.string(),
+      content: zod.string(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary Delete a conversation
+ */
+export const DeleteOpenaiConversationParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
+ * @summary List messages in a conversation
+ */
+export const ListOpenaiMessagesParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const ListOpenaiMessagesResponseItem = zod.object({
+  id: zod.number(),
+  conversationId: zod.number(),
+  role: zod.string(),
+  content: zod.string(),
+  createdAt: zod.coerce.date(),
+});
+export const ListOpenaiMessagesResponse = zod.array(
+  ListOpenaiMessagesResponseItem,
+);
+
+/**
+ * @summary Send a text message and receive a streaming text response
+ */
+export const SendOpenaiMessageParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const SendOpenaiMessageBody = zod.object({
+  content: zod.string(),
+});
+
+/**
+ * @summary Analyze a clothing image with AI vision
+ */
+export const AnalyzeClothingBody = zod.object({
+  imageBase64: zod.string(),
+  mimeType: zod.string(),
+});
+
+export const AnalyzeClothingResponse = zod.object({
+  name: zod.string(),
+  category: zod.string(),
+  colorName: zod.string(),
+  colorHex: zod.string(),
+  type: zod.string(),
+  season: zod.array(zod.string()),
+  occasion: zod.array(zod.string()),
+  tags: zod.array(zod.string()),
+  brand: zod.string().nullish(),
+});
+
+/**
+ * @summary Get AI outfit suggestions from wardrobe items
+ */
+export const GetOutfitSuggestionsBody = zod.object({
+  wardrobeItems: zod.array(
+    zod.object({
+      id: zod.string(),
+      name: zod.string(),
+      category: zod.string(),
+      colorName: zod.string(),
+      type: zod.string(),
+    }),
+  ),
+  occasion: zod.string(),
+  weather: zod.string(),
+  count: zod.number().optional(),
+});
+
+export const GetOutfitSuggestionsResponse = zod.object({
+  outfits: zod.array(
+    zod.object({
+      name: zod.string(),
+      itemIds: zod.array(zod.string()),
+      description: zod.string(),
+      tips: zod.string(),
+    }),
+  ),
+});
+
+/**
+ * @summary Stream a response from the AI style advisor
+ */
+export const StyleChatBody = zod.object({
+  messages: zod.array(
+    zod.object({
+      role: zod.string(),
+      content: zod.string(),
+    }),
+  ),
+  wardrobeSummary: zod.string().optional(),
+});

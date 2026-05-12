@@ -6,4 +6,18 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./analyzeClothingInput";
+export * from "./analyzedClothing";
 export * from "./healthStatus";
+export * from "./openaiConversation";
+export * from "./openaiConversationInput";
+export * from "./openaiConversationWithMessages";
+export * from "./openaiError";
+export * from "./openaiMessage";
+export * from "./openaiMessageInput";
+export * from "./outfitItemInput";
+export * from "./outfitSuggestion";
+export * from "./outfitSuggestionsInput";
+export * from "./outfitSuggestionsOutput";
+export * from "./styleChatInput";
+export * from "./styleChatMessage";

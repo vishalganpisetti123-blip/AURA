@@ -8,3 +8,89 @@
 export interface HealthStatus {
   status: string;
 }
+
+export interface OpenaiConversation {
+  id: number;
+  title: string;
+  createdAt: string;
+}
+
+export interface OpenaiMessage {
+  id: number;
+  conversationId: number;
+  role: string;
+  content: string;
+  createdAt: string;
+}
+
+export interface OpenaiConversationInput {
+  title: string;
+}
+
+export interface OpenaiMessageInput {
+  content: string;
+}
+
+export interface OpenaiConversationWithMessages {
+  id: number;
+  title: string;
+  createdAt: string;
+  messages: OpenaiMessage[];
+}
+
+export interface OpenaiError {
+  error: string;
+}
+
+export interface AnalyzeClothingInput {
+  imageBase64: string;
+  mimeType: string;
+}
+
+export interface AnalyzedClothing {
+  name: string;
+  category: string;
+  colorName: string;
+  colorHex: string;
+  type: string;
+  season: string[];
+  occasion: string[];
+  tags: string[];
+  brand?: string | null;
+}
+
+export interface OutfitItemInput {
+  id: string;
+  name: string;
+  category: string;
+  colorName: string;
+  type: string;
+}
+
+export interface OutfitSuggestion {
+  name: string;
+  itemIds: string[];
+  description: string;
+  tips: string;
+}
+
+export interface OutfitSuggestionsInput {
+  wardrobeItems: OutfitItemInput[];
+  occasion: string;
+  weather: string;
+  count?: number;
+}
+
+export interface OutfitSuggestionsOutput {
+  outfits: OutfitSuggestion[];
+}
+
+export interface StyleChatMessage {
+  role: string;
+  content: string;
+}
+
+export interface StyleChatInput {
+  messages: StyleChatMessage[];
+  wardrobeSummary?: string;
+}

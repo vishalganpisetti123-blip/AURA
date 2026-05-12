@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/"
+title = "Aura – AI Wardrobe Stylist"
+version = "1.0.0"
+id = "artifacts/aura"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+name = "expo"
+paths = [ "/" ]
+localPort = 19220
+
+[services.development]
+run = "pnpm --filter @workspace/aura run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/aura", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/aura", "run", "serve" ]
+
+[services.env]
+PORT = "19220"
+BASE_PATH = "/"

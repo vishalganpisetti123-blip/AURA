@@ -10,6 +10,10 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: openai
+    description: OpenAI AI chat operations
+  - name: wardrobe
+    description: Wardrobe AI analysis and styling operations
 paths:
   /healthz:
     get:
@@ -24,6 +28,180 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /openai/conversations:
+    get:
+      operationId: listOpenaiConversations
+      tags: [openai]
+      summary: List all conversations
+      responses:
+        "200":
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OpenaiConversation"
+    post:
+      operationId: createOpenaiConversation
+      tags: [openai]
+      summary: Create a new conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpenaiConversationInput"
+      responses:
+        "201":
+          description: Created conversation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenaiConversation"
+
+  /openai/conversations/{id}:
+    get:
+      operationId: getOpenaiConversation
+      tags: [openai]
+      summary: Get conversation with messages
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Conversation with messages
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenaiConversationWithMessages"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenaiError"
+    delete:
+      operationId: deleteOpenaiConversation
+      tags: [openai]
+      summary: Delete a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenaiError"
+
+  /openai/conversations/{id}/messages:
+    get:
+      operationId: listOpenaiMessages
+      tags: [openai]
+      summary: List messages in a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OpenaiMessage"
+    post:
+      operationId: sendOpenaiMessage
+      tags: [openai]
+      summary: Send a text message and receive a streaming text response
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpenaiMessageInput"
+      responses:
+        "200":
+          description: SSE stream of assistant text chunks
+          content:
+            text/event-stream: {}
+
+  /wardrobe/analyze:
+    post:
+      operationId: analyzeClothing
+      tags: [wardrobe]
+      summary: Analyze a clothing image with AI vision
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyzeClothingInput"
+      responses:
+        "200":
+          description: Analyzed clothing details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyzedClothing"
+
+  /wardrobe/outfit-suggestions:
+    post:
+      operationId: getOutfitSuggestions
+      tags: [wardrobe]
+      summary: Get AI outfit suggestions from wardrobe items
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OutfitSuggestionsInput"
+      responses:
+        "200":
+          description: Outfit suggestions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutfitSuggestionsOutput"
+
+  /wardrobe/style-chat:
+    post:
+      operationId: styleChat
+      tags: [wardrobe]
+      summary: Stream a response from the AI style advisor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StyleChatInput"
+      responses:
+        "200":
+          description: SSE stream of stylist response
+          content:
+            text/event-stream: {}
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +212,221 @@ components:
       required:
         - status
 
+    OpenaiConversation:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - createdAt
+
+    OpenaiMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+        conversationId:
+          type: integer
+        role:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - conversationId
+        - role
+        - content
+        - createdAt
+
+    OpenaiConversationInput:
+      type: object
+      properties:
+        title:
+          type: string
+      required:
+        - title
+
+    OpenaiMessageInput:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content
+
+    OpenaiConversationWithMessages:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpenaiMessage"
+      required:
+        - id
+        - title
+        - createdAt
+        - messages
+
+    OpenaiError:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    AnalyzeClothingInput:
+      type: object
+      properties:
+        imageBase64:
+          type: string
+        mimeType:
+          type: string
+      required:
+        - imageBase64
+        - mimeType
+
+    AnalyzedClothing:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        colorName:
+          type: string
+        colorHex:
+          type: string
+        type:
+          type: string
+        season:
+          type: array
+          items:
+            type: string
+        occasion:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        brand:
+          type: string
+          nullable: true
+      required:
+        - name
+        - category
+        - colorName
+        - colorHex
+        - type
+        - season
+        - occasion
+        - tags
+
+    OutfitItemInput:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        colorName:
+          type: string
+        type:
+          type: string
+      required:
+        - id
+        - name
+        - category
+        - colorName
+        - type
+
+    OutfitSuggestion:
+      type: object
+      properties:
+        name:
+          type: string
+        itemIds:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        tips:
+          type: string
+      required:
+        - name
+        - itemIds
+        - description
+        - tips
+
+    OutfitSuggestionsInput:
+      type: object
+      properties:
+        wardrobeItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/OutfitItemInput"
+        occasion:
+          type: string
+        weather:
+          type: string
+        count:
+          type: integer
+      required:
+        - wardrobeItems
+        - occasion
+        - weather
+
+    OutfitSuggestionsOutput:
+      type: object
+      properties:
+        outfits:
+          type: array
+          items:
+            $ref: "#/components/schemas/OutfitSuggestion"
+      required:
+        - outfits
+
+    StyleChatMessage:
+      type: object
+      properties:
+        role:
+          type: string
+        content:
+          type: string
+      required:
+        - role
+        - content
+
+    StyleChatInput:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/StyleChatMessage"
+        wardrobeSummary:
+          type: string
+      required:
+        - messages
