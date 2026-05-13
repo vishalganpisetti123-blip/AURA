@@ -7,31 +7,30 @@ import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { Platform, StyleSheet, View, useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 import { useColors } from "@/hooks/useColors";
 
 function NativeTabLayout() {
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
-        <Icon sf={{ default: "tshirt", selected: "tshirt.fill" }} />
-        <Label>Wardrobe</Label>
+        <Icon sf={{ default: "house", selected: "house.fill" }} />
+        <Label>Home</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="scan">
         <Icon sf={{ default: "camera", selected: "camera.fill" }} />
         <Label>Scan</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="outfits">
-        <Icon sf={{ default: "rectangle.stack", selected: "rectangle.stack.fill" }} />
-        <Label>Outfits</Label>
+        <Icon sf={{ default: "tshirt", selected: "tshirt.fill" }} />
+        <Label>Closet</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="style">
-        <Icon sf={{ default: "sparkles", selected: "sparkles" }} />
-        <Label>Style</Label>
+        <Icon sf={{ default: "calendar", selected: "calendar.badge.checkmark" }} />
+        <Label>Planner</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="plan">
-        <Icon sf={{ default: "calendar", selected: "calendar.badge.checkmark" }} />
-        <Label>Plan</Label>
+        <Icon sf={{ default: "washer", selected: "washer.fill" }} />
+        <Label>Laundry</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
@@ -58,7 +57,7 @@ function ClassicTabLayout() {
           borderTopColor: colors.border,
           elevation: 0,
           paddingBottom: isWeb ? 0 : safeAreaInsets.bottom,
-          ...(isWeb ? { height: 84 } : {}),
+          ...(isWeb ? { height: 60 } : {}),
         },
         tabBarBackground: () =>
           isIOS ? (
@@ -71,21 +70,26 @@ function ClassicTabLayout() {
             <View
               style={[
                 StyleSheet.absoluteFill,
-                { backgroundColor: colors.background },
+                { backgroundColor: colors.background, borderTopColor: colors.border, borderTopWidth: 1 },
               ]}
             />
           ) : null,
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontFamily: "Inter_500Medium",
+          marginBottom: 2,
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Wardrobe",
+          title: "Home",
           tabBarIcon: ({ color }) =>
             isIOS ? (
-              <SymbolView name="tshirt.fill" tintColor={color} size={22} />
+              <SymbolView name="house.fill" tintColor={color} size={22} />
             ) : (
-              <Feather name="grid" size={22} color={color} />
+              <Feather name="home" size={22} color={color} />
             ),
         }}
       />
@@ -104,36 +108,36 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="outfits"
         options={{
-          title: "Outfits",
+          title: "Closet",
           tabBarIcon: ({ color }) =>
             isIOS ? (
-              <SymbolView name="rectangle.stack.fill" tintColor={color} size={22} />
+              <SymbolView name="tshirt.fill" tintColor={color} size={22} />
             ) : (
-              <Feather name="layers" size={22} color={color} />
+              <Feather name="grid" size={22} color={color} />
             ),
         }}
       />
       <Tabs.Screen
         name="style"
         options={{
-          title: "Style",
+          title: "Planner",
           tabBarIcon: ({ color }) =>
             isIOS ? (
-              <SymbolView name="sparkles" tintColor={color} size={22} />
+              <SymbolView name="calendar" tintColor={color} size={22} />
             ) : (
-              <Feather name="star" size={22} color={color} />
+              <Feather name="calendar" size={22} color={color} />
             ),
         }}
       />
       <Tabs.Screen
         name="plan"
         options={{
-          title: "Plan",
+          title: "Laundry",
           tabBarIcon: ({ color }) =>
             isIOS ? (
-              <SymbolView name="calendar" tintColor={color} size={22} />
+              <SymbolView name="washer" tintColor={color} size={22} />
             ) : (
-              <Feather name="calendar" size={22} color={color} />
+              <Feather name="droplet" size={22} color={color} />
             ),
         }}
       />

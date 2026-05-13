@@ -38,6 +38,10 @@ function RootLayoutNav() {
         name="item/[id]"
         options={{ headerShown: false, presentation: "card" }}
       />
+      <Stack.Screen
+        name="profile"
+        options={{ headerShown: false, presentation: "modal" }}
+      />
     </Stack>
   );
 }
