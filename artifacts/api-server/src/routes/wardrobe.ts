@@ -186,4 +186,60 @@ router.post("/wardrobe/style-chat", async (req, res) => {
   }
 });
 
+// POST /api/wardrobe/capsule
+router.post("/wardrobe/capsule", async (req, res) => {
+  const { wardrobeItems } = req.body as {
+    wardrobeItems: { name: string; category: string; type: string; colorName: string }[];
+  };
+
+  if (!wardrobeItems || !Array.isArray(wardrobeItems)) {
+    res.status(400).json({ error: "wardrobeItems array is required" });
+    return;
+  }
+
+  try {
+    const itemList = wardrobeItems
+      .map((i) => `${i.name} (${i.category} – ${i.colorName} ${i.type})`)
+      .join(", ");
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-5.4",
+      max_completion_tokens: 800,
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a minimalist wardrobe expert. Analyze a wardrobe and identify missing essentials for a complete, versatile capsule wardrobe. Return only valid JSON.",
+        },
+        {
+          role: "user",
+          content: `The user's current wardrobe includes: ${itemList || "nothing yet"}.
+
+Identify 5 key essential items they are missing (or under-represented) for a complete capsule wardrobe. Focus on versatile, timeless pieces.
+
+Return ONLY a JSON object (no markdown):
+{
+  "essentials": [
+    {
+      "item": "item name",
+      "category": "category",
+      "reason": "one sentence on why this fills a gap",
+      "pairs_with": "brief note on what it pairs with"
+    }
+  ],
+  "insight": "one sentence overall wardrobe insight"
+}`,
+        },
+      ],
+    });
+
+    const raw = response.choices[0]?.message?.content ?? '{"essentials":[]}';
+    const cleaned = raw.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+    res.json(JSON.parse(cleaned));
+  } catch (err) {
+    req.log.error({ err }, "Error generating capsule wardrobe");
+    res.status(500).json({ error: "Failed to generate capsule wardrobe suggestions" });
+  }
+});
+
 export default router;

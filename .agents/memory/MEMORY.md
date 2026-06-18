@@ -1,0 +1,1 @@
+- [expo-file-system v56 API change](expo-file-system-v56.md) — v56 breaks classic API in SDK 54; use RN Share instead for export flows.

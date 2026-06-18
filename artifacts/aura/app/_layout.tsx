@@ -42,6 +42,10 @@ function RootLayoutNav() {
         name="profile"
         options={{ headerShown: false, presentation: "modal" }}
       />
+      <Stack.Screen
+        name="analytics"
+        options={{ headerShown: false, presentation: "modal" }}
+      />
     </Stack>
   );
 }

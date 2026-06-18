@@ -18,12 +18,21 @@ import { useWardrobe } from "@/context/WardrobeContext";
 import { useColors } from "@/hooks/useColors";
 import { CATEGORY_LABELS, ClothingItem } from "@/types/wardrobe";
 
+function daysSince(dateStr: string) {
+  const days = Math.floor(
+    (Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24)
+  );
+  if (days === 0) return "Today";
+  if (days === 1) return "Yesterday";
+  return `${days}d ago`;
+}
+
 export default function ItemDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { items, updateItem, removeItem } = useWardrobe();
+  const { items, updateItem, removeItem, markAsWorn } = useWardrobe();
   const item = items.find((i) => i.id === id);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -66,10 +75,26 @@ export default function ItemDetailScreen() {
           text: "Remove",
           style: "destructive",
           onPress: async () => {
-            Haptics.notificationAsync(
-              Haptics.NotificationFeedbackType.Warning
-            );
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
             await removeItem(id);
+            router.back();
+          },
+        },
+      ]
+    );
+  };
+
+  const handleWoreToday = () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    Alert.alert(
+      "Mark as Worn?",
+      "This item will be moved to laundry and your wear count will update.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Yes, I Wore It",
+          onPress: async () => {
+            await markAsWorn(id);
             router.back();
           },
         },
@@ -100,8 +125,7 @@ export default function ItemDetailScreen() {
         contentContainerStyle={[
           styles.content,
           {
-            paddingBottom:
-              Platform.OS === "web" ? 100 : insets.bottom + 40,
+            paddingBottom: Platform.OS === "web" ? 100 : insets.bottom + 40,
           },
         ]}
       >
@@ -110,10 +134,7 @@ export default function ItemDetailScreen() {
           {item.imageUri ? (
             <Image
               source={{ uri: item.imageUri }}
-              style={[
-                styles.image,
-                { borderColor: colors.border },
-              ]}
+              style={[styles.image, { borderColor: colors.border }]}
               resizeMode="cover"
             />
           ) : (
@@ -124,12 +145,7 @@ export default function ItemDetailScreen() {
                 { backgroundColor: colors.secondary, borderColor: colors.border },
               ]}
             >
-              <View
-                style={[
-                  styles.colorCircle,
-                  { backgroundColor: item.colorHex },
-                ]}
-              />
+              <View style={[styles.colorCircle, { backgroundColor: item.colorHex }]} />
             </View>
           )}
         </View>
@@ -180,7 +196,39 @@ export default function ItemDetailScreen() {
           </Text>
         </View>
 
-        {/* Color & type */}
+        {/* Wore Today button */}
+        <Pressable
+          onPress={handleWoreToday}
+          style={({ pressed }) => [
+            styles.woreBtn,
+            {
+              backgroundColor: colors.accent + "18",
+              borderColor: colors.accent + "55",
+              opacity: pressed ? 0.8 : 1,
+            },
+          ]}
+        >
+          <View style={styles.woreBtnContent}>
+            <Feather name="check-circle" size={18} color={colors.accent} />
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.woreBtnLabel, { color: colors.accent }]}>
+                Wore Today
+              </Text>
+              <Text style={[styles.woreBtnSub, { color: colors.mutedForeground }]}>
+                Logs a wear · moves to laundry
+              </Text>
+            </View>
+            {(item.wornCount ?? 0) > 0 && (
+              <View style={[styles.wornCountBadge, { backgroundColor: colors.accent + "30" }]}>
+                <Text style={[styles.wornCountText, { color: colors.accent }]}>
+                  {item.wornCount}×
+                </Text>
+              </View>
+            )}
+          </View>
+        </Pressable>
+
+        {/* Info card */}
         <View
           style={[
             styles.infoCard,
@@ -192,9 +240,7 @@ export default function ItemDetailScreen() {
             colors={colors}
             rightContent={
               <View style={styles.colorRow}>
-                <View
-                  style={[styles.swatchDot, { backgroundColor: item.colorHex }]}
-                />
+                <View style={[styles.swatchDot, { backgroundColor: item.colorHex }]} />
                 <Text style={[styles.infoValue, { color: colors.foreground }]}>
                   {item.colorName}
                 </Text>
@@ -212,17 +258,41 @@ export default function ItemDetailScreen() {
           <Divider colors={colors} />
           <InfoRow
             label="Season"
-            value={item.season.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(", ")}
+            value={item.season
+              .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+              .join(", ")}
             colors={colors}
           />
           <Divider colors={colors} />
           <InfoRow
             label="Occasion"
-            value={item.occasion.map((o) => o.charAt(0).toUpperCase() + o.slice(1)).join(", ")}
+            value={item.occasion
+              .map((o) => o.charAt(0).toUpperCase() + o.slice(1))
+              .join(", ")}
             colors={colors}
           />
           <Divider colors={colors} />
           <InfoRow label="Added" value={addedDate} colors={colors} />
+          {(item.wornCount ?? 0) > 0 && (
+            <>
+              <Divider colors={colors} />
+              <InfoRow
+                label="Wears"
+                value={`${item.wornCount} time${item.wornCount === 1 ? "" : "s"}`}
+                colors={colors}
+              />
+              {item.lastWornAt && (
+                <>
+                  <Divider colors={colors} />
+                  <InfoRow
+                    label="Last Worn"
+                    value={daysSince(item.lastWornAt)}
+                    colors={colors}
+                  />
+                </>
+              )}
+            </>
+          )}
         </View>
 
         {/* Tags */}
@@ -237,9 +307,7 @@ export default function ItemDetailScreen() {
                   key={tag}
                   style={[styles.tag, { backgroundColor: colors.muted }]}
                 >
-                  <Text style={[styles.tagText, { color: colors.foreground }]}>
-                    {tag}
-                  </Text>
+                  <Text style={[styles.tagText, { color: colors.foreground }]}>{tag}</Text>
                 </View>
               ))}
             </View>
@@ -263,9 +331,7 @@ function InfoRow({
 }) {
   return (
     <View style={styles.infoRow}>
-      <Text style={[styles.infoLabel, { color: colors.mutedForeground }]}>
-        {label}
-      </Text>
+      <Text style={[styles.infoLabel, { color: colors.mutedForeground }]}>{label}</Text>
       {rightContent ?? (
         <Text
           style={[styles.infoValue, { color: colors.foreground }]}
@@ -279,9 +345,7 @@ function InfoRow({
 }
 
 function Divider({ colors }: { colors: ReturnType<typeof useColors> }) {
-  return (
-    <View style={[styles.divider, { backgroundColor: colors.border }]} />
-  );
+  return <View style={[styles.divider, { backgroundColor: colors.border }]} />;
 }
 
 const styles = StyleSheet.create({
@@ -297,31 +361,13 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   notFound: { fontSize: 16, fontFamily: "Inter_400Regular" },
   imageWrap: { width: "100%", aspectRatio: 3 / 4 },
-  image: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 20,
-    borderWidth: 1,
-  },
-  imagePlaceholder: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  colorCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-  },
+  image: { width: "100%", height: "100%", borderRadius: 20, borderWidth: 1 },
+  imagePlaceholder: { alignItems: "center", justifyContent: "center" },
+  colorCircle: { width: 64, height: 64, borderRadius: 32 },
   nameSection: { gap: 4 },
   nameRow: { flexDirection: "row", alignItems: "center" },
-  itemName: {
-    fontSize: 24,
-    fontFamily: "Inter_700Bold",
-  },
-  categoryLabel: {
-    fontSize: 14,
-    fontFamily: "Inter_400Regular",
-  },
+  itemName: { fontSize: 24, fontFamily: "Inter_700Bold" },
+  categoryLabel: { fontSize: 14, fontFamily: "Inter_400Regular" },
   editRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   nameInput: {
     flex: 1,
@@ -339,12 +385,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  infoCard: {
-    borderRadius: 16,
-    padding: 4,
-    borderWidth: 1,
-    overflow: "hidden",
-  },
+  woreBtn: { borderRadius: 16, borderWidth: 1, padding: 14 },
+  woreBtnContent: { flexDirection: "row", alignItems: "center", gap: 12 },
+  woreBtnLabel: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
+  woreBtnSub: { fontSize: 12, fontFamily: "Inter_400Regular", marginTop: 2 },
+  wornCountBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
+  wornCountText: { fontSize: 14, fontFamily: "Inter_700Bold" },
+  infoCard: { borderRadius: 16, padding: 4, borderWidth: 1, overflow: "hidden" },
   infoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -365,10 +412,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   tagsRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  tag: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
+  tag: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
   tagText: { fontSize: 13, fontFamily: "Inter_400Regular" },
 });

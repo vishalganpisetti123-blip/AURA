@@ -53,7 +53,7 @@ export default function ClosetScreen() {
   const router = useRouter();
   const { isSignedIn } = useAuth();
   const { user } = useUser();
-  const { items, sendToLaundry } = useWardrobe();
+  const { items, sendToLaundry, markAsWorn } = useWardrobe();
 
   const [selectedCategory, setSelectedCategory] = useState<ClothingCategory | "all">("all");
   const [selectedSub, setSelectedSub] = useState<string | null>(null);
@@ -96,13 +96,20 @@ export default function ClosetScreen() {
   const handleLaundry = (item: ClothingItem) => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     Alert.alert(
-      "Send to Laundry?",
-      `"${item.name}" will be moved to laundry and hidden from your wardrobe until washed.`,
+      "What would you like to do?",
+      `"${item.name}"`,
       [
         { text: "Cancel", style: "cancel" },
         {
           text: "Send to Laundry",
           onPress: () => sendToLaundry(item.id),
+        },
+        {
+          text: "Wore Today ✓",
+          onPress: () => {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            markAsWorn(item.id);
+          },
         },
       ]
     );
@@ -121,17 +128,29 @@ export default function ClosetScreen() {
           <Text style={[styles.logoText, { color: colors.primary }]}>✦</Text>
           <Text style={[styles.headerTitle, { color: colors.foreground }]}>Closet</Text>
         </View>
-        <Pressable onPress={handleProfile} style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}>
+        <Pressable
+          onPress={handleProfile}
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+        >
           {isSignedIn && user?.imageUrl ? (
             <Image source={{ uri: user.imageUrl }} style={styles.avatar} />
           ) : (
-            <View style={[styles.avatarFallback, { backgroundColor: colors.secondary, borderColor: colors.border }]}>
+            <View
+              style={[
+                styles.avatarFallback,
+                { backgroundColor: colors.secondary, borderColor: colors.border },
+              ]}
+            >
               {isSignedIn ? (
-                <Text style={[styles.avatarInitials, { color: colors.foreground }]}>{initials}</Text>
+                <Text style={[styles.avatarInitials, { color: colors.foreground }]}>
+                  {initials}
+                </Text>
               ) : (
                 <View style={styles.signInRow}>
                   <Feather name="user" size={13} color={colors.mutedForeground} />
-                  <Text style={[styles.signInLabel, { color: colors.mutedForeground }]}>Sign In</Text>
+                  <Text style={[styles.signInLabel, { color: colors.mutedForeground }]}>
+                    Sign In
+                  </Text>
                 </View>
               )}
             </View>
@@ -191,7 +210,12 @@ export default function ClosetScreen() {
               },
             ]}
           >
-            <Text style={[styles.subPillText, { color: !selectedSub ? colors.accent : colors.mutedForeground }]}>
+            <Text
+              style={[
+                styles.subPillText,
+                { color: !selectedSub ? colors.accent : colors.mutedForeground },
+              ]}
+            >
               All
             </Text>
           </Pressable>
@@ -209,7 +233,12 @@ export default function ClosetScreen() {
                   },
                 ]}
               >
-                <Text style={[styles.subPillText, { color: isSelected ? colors.accent : colors.mutedForeground }]}>
+                <Text
+                  style={[
+                    styles.subPillText,
+                    { color: isSelected ? colors.accent : colors.mutedForeground },
+                  ]}
+                >
                   {sub}
                 </Text>
               </Pressable>
@@ -241,7 +270,9 @@ export default function ClosetScreen() {
               style={[styles.scanBtn, { backgroundColor: colors.primary }]}
             >
               <Feather name="camera" size={16} color={colors.primaryForeground} />
-              <Text style={[styles.scanBtnText, { color: colors.primaryForeground }]}>Scan First Item</Text>
+              <Text style={[styles.scanBtnText, { color: colors.primaryForeground }]}>
+                Scan First Item
+              </Text>
             </Pressable>
           )}
         </View>
@@ -257,7 +288,12 @@ export default function ClosetScreen() {
           columnWrapperStyle={styles.columnWrapper}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <ClosetCard item={item} colors={colors} router={router} onLaundry={handleLaundry} />
+            <ClosetCard
+              item={item}
+              colors={colors}
+              router={router}
+              onLaundry={handleLaundry}
+            />
           )}
         />
       )}
@@ -276,6 +312,7 @@ function ClosetCard({
   router: any;
   onLaundry: (item: ClothingItem) => void;
 }) {
+  const wornCount = item.wornCount ?? 0;
   return (
     <Pressable
       onPress={() => router.push(`/item/${item.id}`)}
@@ -289,7 +326,6 @@ function ClosetCard({
         },
       ]}
     >
-      {/* Image */}
       <View style={styles.cardImgWrap}>
         {item.imageUri ? (
           <Image source={{ uri: item.imageUri }} style={styles.cardImg} resizeMode="cover" />
@@ -303,8 +339,19 @@ function ClosetCard({
           style={StyleSheet.absoluteFill}
         />
         {/* Color dot */}
-        <View style={[styles.colorDot, { backgroundColor: item.colorHex, borderColor: "rgba(255,255,255,0.3)" }]} />
-        {/* Laundry button */}
+        <View
+          style={[
+            styles.colorDot,
+            { backgroundColor: item.colorHex, borderColor: "rgba(255,255,255,0.3)" },
+          ]}
+        />
+        {/* Wear count badge */}
+        {wornCount > 0 && (
+          <View style={[styles.wornBadge, { backgroundColor: "rgba(0,0,0,0.6)" }]}>
+            <Text style={styles.wornBadgeText}>{wornCount}×</Text>
+          </View>
+        )}
+        {/* Laundry/Wore button */}
         <Pressable
           onPress={() => onLaundry(item)}
           hitSlop={8}
@@ -313,13 +360,12 @@ function ClosetCard({
           <Feather name="droplet" size={13} color="#fff" />
         </Pressable>
       </View>
-      {/* Info */}
       <View style={styles.cardInfo}>
         <Text style={[styles.cardName, { color: colors.foreground }]} numberOfLines={1}>
           {item.name}
         </Text>
         <Text style={[styles.cardMeta, { color: colors.mutedForeground }]}>
-          {CATEGORY_LABELS[item.category]} • {item.season.join(", ")}
+          {CATEGORY_LABELS[item.category]} · {item.season.join(", ")}
         </Text>
       </View>
     </Pressable>
@@ -359,25 +405,54 @@ const styles = StyleSheet.create({
   filterContent: { paddingHorizontal: H_PAD, gap: 8, alignItems: "center" },
   pill: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, borderWidth: 1 },
   pillText: { fontSize: 13, fontFamily: "Inter_500Medium" },
-  subPill: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: 16, borderWidth: 1 },
+  subPill: {
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
   subPillText: { fontSize: 12, fontFamily: "Inter_400Regular" },
-  countText: { fontSize: 12, fontFamily: "Inter_400Regular", paddingHorizontal: H_PAD, marginBottom: 8 },
+  countText: {
+    fontSize: 12,
+    fontFamily: "Inter_400Regular",
+    paddingHorizontal: H_PAD,
+    marginBottom: 8,
+  },
   gridContent: { paddingHorizontal: H_PAD },
   columnWrapper: { justifyContent: "space-between", marginBottom: CARD_GAP },
-  emptyState: { flex: 1, alignItems: "center", justifyContent: "center", padding: 32, gap: 12 },
-  emptyTitle: { fontSize: 18, fontFamily: "Inter_600SemiBold", textAlign: "center" },
-  emptyText: { fontSize: 13, fontFamily: "Inter_400Regular", textAlign: "center", lineHeight: 18 },
-  scanBtn: { flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 14, marginTop: 8 },
-  scanBtnText: { fontSize: 14, fontFamily: "Inter_600SemiBold" },
-  card: {
-    width: "48%",
-    borderRadius: 18,
-    borderWidth: 1,
-    overflow: "hidden",
+  emptyState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 32,
+    gap: 12,
   },
+  emptyTitle: { fontSize: 18, fontFamily: "Inter_600SemiBold", textAlign: "center" },
+  emptyText: {
+    fontSize: 13,
+    fontFamily: "Inter_400Regular",
+    textAlign: "center",
+    lineHeight: 18,
+  },
+  scanBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 14,
+    marginTop: 8,
+  },
+  scanBtnText: { fontSize: 14, fontFamily: "Inter_600SemiBold" },
+  card: { width: "48%", borderRadius: 18, borderWidth: 1, overflow: "hidden" },
   cardImgWrap: { width: "100%", height: 180, position: "relative" },
   cardImg: { width: "100%", height: "100%" },
-  cardImgPlaceholder: { width: "100%", height: "100%", alignItems: "center", justifyContent: "center" },
+  cardImgPlaceholder: {
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   colorDot: {
     position: "absolute",
     bottom: 8,
@@ -386,6 +461,19 @@ const styles = StyleSheet.create({
     height: 14,
     borderRadius: 7,
     borderWidth: 1.5,
+  },
+  wornBadge: {
+    position: "absolute",
+    bottom: 8,
+    right: 36,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+  },
+  wornBadgeText: {
+    fontSize: 10,
+    fontFamily: "Inter_700Bold",
+    color: "#fff",
   },
   laundryBtn: {
     position: "absolute",

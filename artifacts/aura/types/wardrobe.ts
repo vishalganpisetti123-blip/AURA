@@ -24,6 +24,8 @@ export interface ClothingItem {
   brand?: string;
   imageUri: string;
   addedAt: string;
+  wornCount?: number;
+  lastWornAt?: string;
 }
 
 export interface SavedOutfit {
@@ -35,6 +37,11 @@ export interface SavedOutfit {
   occasion: string;
   weather?: string;
   savedAt: string;
+}
+
+export interface PlannedDate {
+  date: string;
+  outfitId: string;
 }
 
 export type WeatherCondition =

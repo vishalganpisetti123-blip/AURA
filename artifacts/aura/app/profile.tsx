@@ -1,8 +1,10 @@
 import { Feather } from "@expo/vector-icons";
 import { useAuth, useUser } from "@clerk/expo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
-import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { Share } from "react-native";
 import React from "react";
 import {
   Alert,
@@ -59,9 +61,81 @@ export default function ProfileScreen() {
     );
   };
 
+  const handleExport = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const data = {
+      exportedAt: new Date().toISOString(),
+      itemCount: items.length,
+      outfitCount: savedOutfits.length,
+      items,
+      outfits: savedOutfits,
+    };
+    const jsonStr = JSON.stringify(data, null, 2);
+
+    if (Platform.OS === "web") {
+      try {
+        const win = globalThis as Record<string, any>;
+        const doc = win["document"];
+        if (doc) {
+          const blob = new Blob([jsonStr], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = doc.createElement("a");
+          a.href = url;
+          a.download = `aura-wardrobe-${new Date().toISOString().split("T")[0]}.json`;
+          doc.body.appendChild(a);
+          a.click();
+          doc.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+      } catch {
+        Alert.alert("Export", "Could not export on this platform.");
+      }
+    } else {
+      try {
+        await Share.share({
+          title: "Aura Wardrobe Export",
+          message: jsonStr,
+        });
+      } catch {
+        Alert.alert(
+          "Export",
+          `Your wardrobe has ${items.length} items and ${savedOutfits.length} outfits.`
+        );
+      }
+    }
+  };
+
+  const handleDeleteAccount = () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    Alert.alert(
+      "Delete Account",
+      "This will permanently delete your account and all wardrobe data. This cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete Everything",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await AsyncStorage.multiRemove([
+                "@aura_wardrobe_items",
+                "@aura_saved_outfits",
+                "@aura_laundry_items",
+                "@aura_planned_dates",
+              ]);
+              await signOut();
+              router.replace("/");
+            } catch {
+              Alert.alert("Error", "Failed to delete account. Please try again.");
+            }
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Header */}
       <View style={[styles.header, { paddingTop: topPad }]}>
         <Pressable
           onPress={() => router.back()}
@@ -90,7 +164,13 @@ export default function ProfileScreen() {
           {user?.imageUrl ? (
             <Image source={{ uri: user.imageUrl }} style={styles.avatar} />
           ) : (
-            <View style={[styles.avatar, styles.avatarFallback, { backgroundColor: colors.primary + "33", borderColor: colors.primary }]}>
+            <View
+              style={[
+                styles.avatar,
+                styles.avatarFallback,
+                { backgroundColor: colors.primary + "33", borderColor: colors.primary },
+              ]}
+            >
               <Text style={[styles.avatarInitials, { color: colors.primary }]}>
                 {initials}
               </Text>
@@ -108,50 +188,69 @@ export default function ProfileScreen() {
 
         {/* Stats */}
         <View style={styles.statsRow}>
-          <StatCard
-            value={items.length}
-            label="In Wardrobe"
-            icon="grid"
-            colors={colors}
-          />
-          <StatCard
-            value={savedOutfits.length}
-            label="Saved Outfits"
-            icon="layers"
-            colors={colors}
-          />
-          <StatCard
-            value={laundryItems.length}
-            label="In Laundry"
-            icon="droplet"
-            colors={colors}
-          />
+          <StatCard value={items.length} label="In Wardrobe" icon="grid" colors={colors} />
+          <StatCard value={savedOutfits.length} label="Saved Outfits" icon="layers" colors={colors} />
+          <StatCard value={laundryItems.length} label="In Laundry" icon="droplet" colors={colors} />
         </View>
 
-        {/* Actions */}
+        {/* Analytics */}
+        <Pressable
+          onPress={() => router.push("/analytics" as any)}
+          style={({ pressed }) => [
+            styles.analyticsBtn,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              opacity: pressed ? 0.8 : 1,
+            },
+          ]}
+        >
+          <View style={[styles.analyticsBtnIcon, { backgroundColor: colors.accent + "22" }]}>
+            <Feather name="bar-chart-2" size={18} color={colors.accent} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.analyticsBtnTitle, { color: colors.foreground }]}>
+              Wardrobe Analytics
+            </Text>
+            <Text style={[styles.analyticsBtnSub, { color: colors.mutedForeground }]}>
+              Most worn, never worn, style insights
+            </Text>
+          </View>
+          <Feather name="chevron-right" size={16} color={colors.mutedForeground} />
+        </Pressable>
+
+        {/* Account actions */}
         <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Text style={[styles.sectionTitle, { color: colors.mutedForeground }]}>
             Account
           </Text>
+          <MenuRow icon="user" label="Edit Profile" colors={colors} onPress={() => {}} />
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+          <MenuRow icon="bell" label="Notifications" colors={colors} onPress={() => {}} />
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+          <MenuRow icon="shield" label="Privacy" colors={colors} onPress={() => {}} />
+        </View>
+
+        {/* Data actions */}
+        <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.mutedForeground }]}>
+            Data
+          </Text>
           <MenuRow
-            icon="user"
-            label="Edit Profile"
+            icon="download"
+            label="Export Wardrobe"
+            subtitle="Download your wardrobe as JSON"
             colors={colors}
-            onPress={() => {}}
+            onPress={handleExport}
           />
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
           <MenuRow
-            icon="bell"
-            label="Notifications"
+            icon="trash-2"
+            label="Delete Account"
+            subtitle="Permanently remove all data"
             colors={colors}
-            onPress={() => {}}
-          />
-          <View style={[styles.divider, { backgroundColor: colors.border }]} />
-          <MenuRow
-            icon="shield"
-            label="Privacy"
-            colors={colors}
-            onPress={() => {}}
+            onPress={handleDeleteAccount}
+            destructive
           />
         </View>
 
@@ -190,10 +289,7 @@ function StatCard({
 }) {
   return (
     <View
-      style={[
-        styles.statCard,
-        { backgroundColor: colors.card, borderColor: colors.border },
-      ]}
+      style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}
     >
       <Feather name={icon as any} size={18} color={colors.primary} />
       <Text style={[styles.statValue, { color: colors.foreground }]}>{value}</Text>
@@ -205,23 +301,38 @@ function StatCard({
 function MenuRow({
   icon,
   label,
+  subtitle,
   colors,
   onPress,
+  destructive,
 }: {
   icon: string;
   label: string;
+  subtitle?: string;
   colors: any;
   onPress: () => void;
+  destructive?: boolean;
 }) {
+  const textColor = destructive ? colors.destructive : colors.foreground;
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [styles.menuRow, { opacity: pressed ? 0.7 : 1 }]}
     >
-      <View style={[styles.menuIcon, { backgroundColor: colors.secondary }]}>
-        <Feather name={icon as any} size={16} color={colors.foreground} />
+      <View
+        style={[
+          styles.menuIcon,
+          { backgroundColor: destructive ? colors.destructive + "18" : colors.secondary },
+        ]}
+      >
+        <Feather name={icon as any} size={16} color={textColor} />
       </View>
-      <Text style={[styles.menuLabel, { color: colors.foreground }]}>{label}</Text>
+      <View style={{ flex: 1 }}>
+        <Text style={[styles.menuLabel, { color: textColor }]}>{label}</Text>
+        {subtitle ? (
+          <Text style={[styles.menuSub, { color: colors.mutedForeground }]}>{subtitle}</Text>
+        ) : null}
+      </View>
       <Feather name="chevron-right" size={16} color={colors.mutedForeground} />
     </Pressable>
   );
@@ -236,84 +347,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 16,
   },
-  backBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontFamily: "Inter_600SemiBold",
-  },
-  content: {
-    paddingHorizontal: 20,
-    gap: 16,
-  },
-  avatarSection: {
-    alignItems: "center",
-    paddingVertical: 24,
-    position: "relative",
-  },
-  avatarGlow: {
-    position: "absolute",
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    top: 0,
-  },
-  avatar: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    marginBottom: 12,
-  },
-  avatarFallback: {
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-  },
-  avatarInitials: {
-    fontSize: 36,
-    fontFamily: "Inter_700Bold",
-  },
-  displayName: {
-    fontSize: 22,
-    fontFamily: "Inter_700Bold",
-    marginBottom: 4,
-  },
-  email: {
-    fontSize: 14,
-    fontFamily: "Inter_400Regular",
-  },
-  statsRow: {
+  backBtn: { width: 36, height: 36, borderRadius: 18, alignItems: "center", justifyContent: "center" },
+  headerTitle: { fontSize: 17, fontFamily: "Inter_600SemiBold" },
+  content: { paddingHorizontal: 20, gap: 16 },
+  avatarSection: { alignItems: "center", paddingVertical: 24, position: "relative" },
+  avatarGlow: { position: "absolute", width: 200, height: 200, borderRadius: 100, top: 0 },
+  avatar: { width: 96, height: 96, borderRadius: 48, marginBottom: 12 },
+  avatarFallback: { alignItems: "center", justifyContent: "center", borderWidth: 2 },
+  avatarInitials: { fontSize: 36, fontFamily: "Inter_700Bold" },
+  displayName: { fontSize: 22, fontFamily: "Inter_700Bold", marginBottom: 4 },
+  email: { fontSize: 14, fontFamily: "Inter_400Regular" },
+  statsRow: { flexDirection: "row", gap: 10 },
+  statCard: { flex: 1, alignItems: "center", gap: 6, padding: 14, borderRadius: 16, borderWidth: 1 },
+  statValue: { fontSize: 22, fontFamily: "Inter_700Bold" },
+  statLabel: { fontSize: 11, fontFamily: "Inter_400Regular", textAlign: "center" },
+  analyticsBtn: {
     flexDirection: "row",
-    gap: 10,
-  },
-  statCard: {
-    flex: 1,
     alignItems: "center",
-    gap: 6,
-    padding: 14,
+    gap: 12,
+    padding: 16,
     borderRadius: 16,
     borderWidth: 1,
   },
-  statValue: {
-    fontSize: 22,
-    fontFamily: "Inter_700Bold",
-  },
-  statLabel: {
-    fontSize: 11,
-    fontFamily: "Inter_400Regular",
-    textAlign: "center",
-  },
-  section: {
-    borderRadius: 16,
-    borderWidth: 1,
-    overflow: "hidden",
-    paddingTop: 12,
-  },
+  analyticsBtnIcon: { width: 40, height: 40, borderRadius: 12, alignItems: "center", justifyContent: "center" },
+  analyticsBtnTitle: { fontSize: 14, fontFamily: "Inter_600SemiBold" },
+  analyticsBtnSub: { fontSize: 12, fontFamily: "Inter_400Regular", marginTop: 2 },
+  section: { borderRadius: 16, borderWidth: 1, overflow: "hidden", paddingTop: 12 },
   sectionTitle: {
     fontSize: 11,
     fontFamily: "Inter_500Medium",
@@ -322,29 +381,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 4,
   },
-  divider: {
-    height: 1,
-    marginLeft: 52,
-  },
-  menuRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 13,
-  },
-  menuIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  menuLabel: {
-    flex: 1,
-    fontSize: 15,
-    fontFamily: "Inter_400Regular",
-  },
+  divider: { height: 1, marginLeft: 52 },
+  menuRow: { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 16, paddingVertical: 13 },
+  menuIcon: { width: 32, height: 32, borderRadius: 8, alignItems: "center", justifyContent: "center" },
+  menuLabel: { fontSize: 15, fontFamily: "Inter_400Regular" },
+  menuSub: { fontSize: 11, fontFamily: "Inter_400Regular", marginTop: 1 },
   signOutBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -355,8 +396,5 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     marginTop: 4,
   },
-  signOutText: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-  },
+  signOutText: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
 });
