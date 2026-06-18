@@ -1,0 +1,608 @@
+For **AURA Wardrobe**, if you're preparing it for a real public launch (App Store + Play Store), here's the complete production-ready developer prompt.
+
+---
+
+# AURA Wardrobe – Production Release Prompt
+
+Transform AURA Wardrobe from a prototype into a fully production-ready AI fashion platform.
+
+The app should be launch-ready for:
+
+* iOS App Store
+* Google Play Store
+* Public users
+* Global scaling
+
+The app should function as:
+
+* AI Personal Stylist
+* Digital Wardrobe
+* Outfit Planner
+* Laundry Tracker
+* Fashion Assistant
+
+Inspired by:
+
+* Pinterest
+* Whering
+* Indyx
+* Apple Human Interface Guidelines
+
+---
+
+# CORE PRODUCT
+
+Users can:
+
+* Scan clothing
+* Upload clothing photos
+* Organize wardrobe
+* Generate outfits
+* Track worn items
+* Manage laundry
+* Plan outfits
+* Get AI fashion advice
+* Receive weather-based recommendations
+
+The app must feel:
+
+* Premium
+* Luxury
+* Minimal
+* Intelligent
+
+---
+
+# TECH STACK
+
+Frontend:
+
+* SwiftUI (iOS)
+* Jetpack Compose (Android)
+
+Architecture:
+
+* MVVM
+* Clean Architecture
+
+Backend:
+
+* Firebase Auth
+* Firestore
+* Firebase Storage
+* Cloud Functions
+
+AI:
+
+* OpenAI
+* Vision AI
+* OCR
+* Image Segmentation
+
+Notifications:
+
+* Firebase Cloud Messaging
+
+---
+
+# SECURITY REQUIREMENTS
+
+Implement enterprise-grade security.
+
+---
+
+## Authentication
+
+Support:
+
+* Guest Mode
+* Google Sign-In
+* Apple Sign-In
+
+Requirements:
+
+* Secure sessions
+* Device sync
+* Logout
+* Session expiration
+
+---
+
+## User Data Security
+
+Protect:
+
+* Clothing images
+* Outfit history
+* Profile information
+* AI recommendations
+
+Use:
+
+* HTTPS
+* Encrypted storage
+* Firebase Security Rules
+
+---
+
+## Image Security
+
+Wardrobe images are private.
+
+Requirements:
+
+* Private storage
+* User-specific access
+* Signed URLs
+* Secure uploads
+
+Users should never see another user's wardrobe.
+
+---
+
+# PRIVACY POLICY
+
+Generate a complete Privacy Policy.
+
+Disclose collection of:
+
+* Wardrobe photos
+* Clothing metadata
+* User profile data
+* Outfit history
+* Search history
+
+Explain usage:
+
+* Outfit recommendations
+* Weather suggestions
+* Laundry tracking
+* Personalization
+
+---
+
+# TERMS OF SERVICE
+
+Create:
+
+* User responsibilities
+* AI recommendation disclaimer
+* Limitation of liability
+* Intellectual property rights
+
+---
+
+# ACCOUNT MANAGEMENT
+
+Users can:
+
+* View profile
+* Update profile
+* Export wardrobe
+* Delete account
+
+---
+
+## Account Deletion
+
+One-click account deletion.
+
+Delete:
+
+* Clothing images
+* Outfit history
+* Laundry history
+* User profile
+
+Must comply with GDPR principles.
+
+---
+
+# AI WARDROBE SCANNING
+
+Implement:
+
+Camera scanning
+
+Gallery upload
+
+AI clothing recognition
+
+---
+
+## Clothing Detection
+
+Automatically identify:
+
+* Category
+* Color
+* Brand
+* Fabric
+* Pattern
+* Season
+* Style
+
+Examples:
+
+* T-shirt
+* Hoodie
+* Jacket
+* Shirt
+* Jeans
+* Shoes
+* Watches
+* Accessories
+
+---
+
+## Background Removal
+
+Automatically:
+
+* Remove background
+* Crop clothing
+* Center clothing item
+
+Store clean PNG assets.
+
+---
+
+# WARDROBE MANAGEMENT
+
+Users can:
+
+* Edit clothing
+* Delete clothing
+* Favorite clothing
+* Search wardrobe
+
+Filters:
+
+* Color
+* Brand
+* Season
+* Occasion
+* Style
+
+---
+
+# AI OUTFIT GENERATOR
+
+Generate outfits using:
+
+* Colors
+* Style compatibility
+* Weather
+* Occasion
+* Laundry availability
+
+Occasions:
+
+* Casual
+* College
+* Office
+* Wedding
+* Party
+* Gym
+* Travel
+
+---
+
+## Outfit Explanations
+
+The AI should explain:
+
+Why items match
+
+Color coordination
+
+Style compatibility
+
+Season suitability
+
+---
+
+# LAUNDRY MANAGEMENT
+
+Implement full laundry workflow.
+
+---
+
+## Worn Outfit Logic
+
+When user marks:
+
+"Wore This Outfit"
+
+Automatically:
+
+* Move outfit items to laundry
+* Remove from wardrobe availability
+* Exclude from outfit generation
+
+---
+
+## Laundry Features
+
+Users can:
+
+* View laundry basket
+* Mark washed
+* Wash All
+* Reset Laundry
+
+When washed:
+
+Return clothing to wardrobe.
+
+---
+
+# WEATHER INTEGRATION
+
+Integrate weather APIs.
+
+Detect:
+
+* Location
+* Temperature
+* Rain
+* Humidity
+
+Examples:
+
+Cold:
+
+* Hoodies
+* Jackets
+
+Hot:
+
+* Cotton shirts
+* Shorts
+
+Rain:
+
+* Waterproof clothing
+
+---
+
+# PLANNER SYSTEM
+
+Users can:
+
+* Schedule outfits
+* Weekly planning
+* Travel packing
+
+---
+
+## Calendar
+
+Include:
+
+* Monthly view
+* Weekly view
+* Outfit reminders
+
+---
+
+# AI STYLIST CHAT
+
+Add:
+
+AI Fashion Assistant
+
+Questions:
+
+* What should I wear today?
+* What matches these shoes?
+* What should I pack for Goa?
+* Build a capsule wardrobe
+
+The AI must understand:
+
+* User wardrobe
+* User preferences
+* Current weather
+
+---
+
+# ANALYTICS
+
+Users can view:
+
+* Most worn clothes
+* Least worn clothes
+* Outfit statistics
+* Style insights
+
+---
+
+# CAPSULE WARDROBE
+
+Generate:
+
+* Minimal wardrobe suggestions
+* Missing essentials
+* Smart wardrobe insights
+
+---
+
+# PROFILE SECTION
+
+Include:
+
+* Style preferences
+* Theme settings
+* Notifications
+* AI settings
+* Privacy settings
+
+---
+
+# LIGHT MODE + DARK MODE
+
+Support:
+
+* Light Mode
+* Dark Mode
+
+Use:
+
+* Black and white monochrome aesthetic
+* Frosted glass
+* Liquid glass
+* Subtle blur
+
+Avoid:
+
+* Neon colors
+* Excessive gradients
+
+---
+
+# PUSH NOTIFICATIONS
+
+Send:
+
+* Laundry reminders
+* Outfit reminders
+* Weather outfit suggestions
+* Planner notifications
+
+Allow full notification controls.
+
+---
+
+# OFFLINE SUPPORT
+
+Users should still access:
+
+* Wardrobe
+* Saved outfits
+* Planner
+
+when offline.
+
+Implement:
+
+* Local caching
+* Background sync
+
+---
+
+# ADMIN PANEL
+
+Create dashboard for:
+
+* User analytics
+* AI usage
+* Active users
+* Error logs
+* Storage usage
+
+---
+
+# APP STORE REQUIREMENTS
+
+Prepare:
+
+## Apple App Store
+
+* Privacy Policy URL
+* Terms URL
+* Delete Account Feature
+* Sign In With Apple
+
+---
+
+## Google Play Store
+
+* Data Safety Form
+* Privacy Policy
+* Secure Login
+
+---
+
+# LEGAL PAGES
+
+Generate:
+
+* Privacy Policy
+* Terms of Service
+* Cookie Policy
+* Data Deletion Policy
+* Contact Page
+
+---
+
+# MONITORING
+
+Integrate:
+
+* Firebase Crashlytics
+* Sentry
+* Performance Monitoring
+
+Track:
+
+* Crashes
+* AI failures
+* Upload failures
+* Outfit generation errors
+
+---
+
+# PERFORMANCE
+
+Optimize for:
+
+* 120Hz scrolling
+* Fast image loading
+* AI response speed
+* Smooth animations
+
+Use:
+
+* Lazy loading
+* Background processing
+* Image compression
+
+---
+
+# DEPLOYMENT
+
+Generate:
+
+* Production configuration
+* Firebase setup
+* Environment management
+* CI/CD pipeline
+* Release builds
+
+---
+
+# DELIVERABLES
+
+Generate:
+
+* Full production-ready codebase
+* Firebase backend
+* Firestore schema
+* AI wardrobe scanner
+* Outfit recommendation engine
+* Laundry system
+* Weather integration
+* Planner system
+* AI stylist chat
+* Authentication
+* Security
+* Privacy Policy
+* Terms of Service
+* App Store compliance
+* Monitoring setup
+* Deployment documentation
+
+The final product should feel like:
+
+**"An Apple-designed AI fashion assistant that combines Pinterest inspiration, luxury wardrobe management, intelligent outfit recommendations, and seamless wardrobe organization."**
