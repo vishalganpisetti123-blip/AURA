@@ -161,7 +161,7 @@ export default function HomeScreen() {
           style={({ pressed }) => [styles.generateBtn, { opacity: pressed ? 0.88 : 1 }]}
         >
           <LinearGradient
-            colors={[colors.primary, "#7C3AED"]}
+            colors={[colors.accent, "#9E7C58"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.generateGradient}

@@ -340,7 +340,7 @@ export default function PlannerScreen() {
             disabled={isGenerating}
             style={({ pressed }) => [styles.generateBtn, { opacity: pressed || isGenerating ? 0.8 : 1 }]}
           >
-            <LinearGradient colors={[colors.primary, "#7C3AED"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.generateGradient}>
+            <LinearGradient colors={[colors.accent, "#9E7C58"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.generateGradient}>
               {isGenerating ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
