@@ -104,7 +104,7 @@ function FloatingTabBar({ state, navigation }: any) {
                   key={route.key}
                   onPress={onPress}
                   style={({ pressed }) => [
-                    styles.tabCenter,
+                    styles.tab,
                     { opacity: pressed ? 0.85 : 1 },
                   ]}
                 >
@@ -114,16 +114,16 @@ function FloatingTabBar({ state, navigation }: any) {
                       {
                         backgroundColor: colors.foreground,
                         shadowColor: colors.foreground,
-                        shadowOpacity: 0.25,
-                        shadowRadius: 12,
-                        shadowOffset: { width: 0, height: 4 },
-                        elevation: 8,
+                        shadowOpacity: 0.2,
+                        shadowRadius: 8,
+                        shadowOffset: { width: 0, height: 2 },
+                        elevation: 6,
                       },
                     ]}
                   >
                     <Feather
                       name={tabInfo.icon}
-                      size={22}
+                      size={20}
                       color={colors.background}
                     />
                   </View>
@@ -259,20 +259,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     borderRadius: 22,
   },
-  tabCenter: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 4,
-    paddingVertical: 4,
-  },
   tabCenterCircle: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: -14,
   },
   tabLabel: {
     fontSize: 9,
