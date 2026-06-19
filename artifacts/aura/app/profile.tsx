@@ -219,18 +219,6 @@ export default function ProfileScreen() {
           <Feather name="chevron-right" size={16} color={colors.mutedForeground} />
         </Pressable>
 
-        {/* Account actions */}
-        <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.sectionTitle, { color: colors.mutedForeground }]}>
-            Account
-          </Text>
-          <MenuRow icon="user" label="Edit Profile" colors={colors} onPress={() => {}} />
-          <View style={[styles.divider, { backgroundColor: colors.border }]} />
-          <MenuRow icon="bell" label="Notifications" colors={colors} onPress={() => {}} />
-          <View style={[styles.divider, { backgroundColor: colors.border }]} />
-          <MenuRow icon="shield" label="Privacy" colors={colors} onPress={() => {}} />
-        </View>
-
         {/* Data actions */}
         <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Text style={[styles.sectionTitle, { color: colors.mutedForeground }]}>
@@ -251,6 +239,41 @@ export default function ProfileScreen() {
             colors={colors}
             onPress={handleDeleteAccount}
             destructive
+          />
+        </View>
+
+        {/* Legal & Support */}
+        <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.mutedForeground }]}>
+            Legal & Support
+          </Text>
+          <MenuRow
+            icon="shield"
+            label="Privacy Policy"
+            colors={colors}
+            onPress={() => router.push("/privacy-policy" as any)}
+          />
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+          <MenuRow
+            icon="file-text"
+            label="Terms & Conditions"
+            colors={colors}
+            onPress={() => router.push("/terms" as any)}
+          />
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+          <MenuRow
+            icon="mail"
+            label="Contact & Support"
+            colors={colors}
+            onPress={() => router.push("/contact" as any)}
+          />
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+          <MenuRow
+            icon="info"
+            label="About Aura"
+            subtitle={`Version 1.0.0`}
+            colors={colors}
+            onPress={() => router.push("/about" as any)}
           />
         </View>
 

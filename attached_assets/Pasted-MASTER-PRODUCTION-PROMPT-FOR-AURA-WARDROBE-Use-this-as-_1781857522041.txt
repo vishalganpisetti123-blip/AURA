@@ -1,0 +1,252 @@
+MASTER PRODUCTION PROMPT FOR AURA WARDROBE
+
+Use this as your FINAL prompt after the app is completed.
+
+PRODUCTION HARDENING
+
+Convert AURA Wardrobe into a production-ready application suitable for public release on:
+
+Apple App Store
+Google Play Store
+
+The app must pass:
+
+Apple App Review
+Google Play Review
+Security checks
+Privacy compliance
+Authentication requirements
+REQUIRED LEGAL PAGES
+
+Create fully functional pages inside the app:
+
+Privacy Policy
+
+Generate a complete privacy policy covering:
+
+Data collected:
+
+Account information
+Google Sign-In data
+Apple Sign-In data
+Clothing images
+Outfit history
+Laundry history
+AI interactions
+Weather data
+Device information
+
+Explain:
+
+Why data is collected
+How data is stored
+How data is protected
+How users can request deletion
+
+Add:
+
+GDPR compliance
+CCPA compliance
+User rights
+Terms & Conditions
+
+Generate Terms of Service covering:
+
+Acceptable use
+AI-generated recommendations disclaimer
+User-uploaded images
+Intellectual property
+Limitation of liability
+Account suspension
+Termination rights
+Data Deletion Policy
+
+Users must be able to:
+
+Delete account
+Delete wardrobe
+Delete all uploaded photos
+
+Apple specifically requires this.
+
+Contact Page
+
+Include:
+
+Support email
+Business email
+Feedback form
+Bug reporting form
+About Page
+
+Include:
+
+App version
+Build version
+Company information
+Legal information
+ACCOUNT MANAGEMENT
+
+Add a dedicated account management screen.
+
+Users can:
+
+Change name
+Change profile photo
+Change style preferences
+Delete account
+Export wardrobe
+Download personal data
+SECURITY REQUIREMENTS
+
+Implement:
+
+Authentication
+
+Support:
+
+Apple Sign-In
+Google Sign-In
+Guest Mode
+Storage Security
+
+Wardrobe photos must be:
+
+Private
+User-specific
+Securely stored
+
+Use:
+
+Firebase Storage Rules
+Signed URLs
+API Security
+
+Implement:
+
+Rate limiting
+JWT validation
+Input validation
+Anti-spam protection
+Encryption
+
+Encrypt:
+
+User preferences
+Outfit history
+Style profile
+
+Use:
+
+HTTPS
+TLS
+Secure Firebase rules
+APP STORE REQUIREMENTS
+Apple App Store
+
+Must include:
+
+Sign in with Apple
+Privacy Policy URL
+Terms URL
+Account deletion
+Age rating
+App icon
+Screenshots
+Google Play Store
+
+Must include:
+
+Privacy Policy URL
+Data Safety form
+Account deletion
+Secure authentication
+PUSH NOTIFICATIONS
+
+Add settings page:
+
+Allow:
+
+Outfit reminders
+Laundry reminders
+Weather recommendations
+Planner notifications
+
+Users can:
+
+Enable
+Disable
+MONITORING
+
+Implement:
+
+Firebase Crashlytics
+Firebase Analytics
+Performance Monitoring
+
+Track:
+
+Crashes
+AI errors
+Upload failures
+Outfit generation failures
+BACKUP & RECOVERY
+
+Add:
+
+Cloud sync
+Backup wardrobe
+Restore wardrobe
+
+Support:
+
+Multiple devices
+APP ICONS
+
+Generate:
+
+iOS App Icon set
+Android adaptive icons
+Splash screens
+
+Theme:
+
+Monochrome
+Minimal
+Luxury fashion
+PERFORMANCE
+
+Optimize:
+
+120Hz scrolling
+Fast wardrobe loading
+Fast outfit generation
+Image caching
+Lazy loading
+ACCESSIBILITY
+
+Support:
+
+Dynamic text sizes
+Screen readers
+VoiceOver
+TalkBack
+
+Required for App Store approval.
+
+FINAL DELIVERABLES
+
+Generate:
+
+Production-ready code
+Privacy Policy
+Terms of Service
+Data Deletion Policy
+Contact Page
+About Page
+Firebase security rules
+Crash reporting
+Analytics
+App Store compliance
+Google Play compliance
+Deployment documentation
