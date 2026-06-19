@@ -19,11 +19,11 @@ const BUILD_NUMBER = "100";
 const RELEASE_DATE = "June 2025";
 
 const TECH_STACK = [
-  { name: "Expo (React Native)", desc: "Cross‑platform mobile framework" },
+  { name: "Expo (React Native)", desc: "Cross-platform mobile framework" },
   { name: "OpenAI GPT", desc: "AI clothing analysis & outfit generation" },
   { name: "Clerk", desc: "Authentication & identity management" },
   { name: "PostgreSQL (Neon)", desc: "Conversation history storage" },
-  { name: "Open‑Meteo", desc: "Free weather API" },
+  { name: "Open-Meteo", desc: "Free weather API" },
   { name: "Express 5", desc: "API server" },
 ];
 
@@ -71,7 +71,7 @@ export default function AboutScreen() {
         {/* App identity */}
         <View style={styles.identitySection}>
           <View style={[styles.appIconWrap, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={styles.appIconEmoji}>✦</Text>
+            <Feather name="star" size={36} color={colors.foreground} />
           </View>
           <Text style={[styles.appName, { color: colors.foreground }]}>Aura Wardrobe</Text>
           <Text style={[styles.appTagline, { color: colors.mutedForeground }]}>
@@ -99,7 +99,7 @@ export default function AboutScreen() {
         <View style={[styles.descCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Text style={[styles.descTitle, { color: colors.foreground }]}>About the App</Text>
           <Text style={[styles.descBody, { color: colors.mutedForeground }]}>
-            Aura Wardrobe is an AI‑powered personal stylist that helps you organize your
+            Aura Wardrobe is an AI-powered personal stylist that helps you organize your
             clothing, discover new outfit combinations, and dress better every day.
 
             {"\n\n"}
@@ -109,7 +109,7 @@ export default function AboutScreen() {
             personal style.
 
             {"\n\n"}
-            Built with a focus on privacy: your wardrobe stays on‑device by default.
+            Built with a focus on privacy: your wardrobe stays on-device by default.
             No ads. No data selling. Just style.
           </Text>
         </View>
@@ -172,7 +172,7 @@ export default function AboutScreen() {
         {/* Copyright */}
         <Text style={[styles.copyright, { color: colors.mutedForeground }]}>
           © {new Date().getFullYear()} Aura Wardrobe. All rights reserved.{"\n"}
-          Made with ♥ for fashion‑forward people.
+          Made with love for fashion-forward people.
         </Text>
       </ScrollView>
     </View>
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 4,
   },
-  appIconEmoji: { fontSize: 36 },
+
   appName: { fontSize: 24, fontFamily: "Inter_700Bold" },
   appTagline: { fontSize: 14, fontFamily: "Inter_400Regular" },
   versionBadge: {

@@ -21,12 +21,12 @@ const SECTIONS: Section[] = [
     heading: "1. Information We Collect",
     body: `We collect information you provide directly:
 
-• Account information — name, email address, profile photo (via Apple Sign‑In or Google Sign‑In through Clerk Auth).
+• Account information — name, email address, profile photo (via Apple Sign-In or Google Sign-In through Clerk Auth).
 • Clothing images — photos you take or choose from your library when scanning items.
 • Wardrobe data — item names, categories, colors, brands, wear history, and outfit combinations.
 • Laundry and planner history — items marked as worn, sent to laundry, or scheduled for specific dates.
 • AI interaction data — messages exchanged with the Aura AI stylist and outfit requests.
-• Weather data — approximate location used only in‑session to retrieve weather conditions for outfit suggestions (not stored on our servers).
+• Weather data — approximate location used only in-session to retrieve weather conditions for outfit suggestions (not stored on our servers).
 • Device information — device type, operating system, and app version for crash reporting and compatibility.`,
   },
   {
@@ -36,7 +36,7 @@ const SECTIONS: Section[] = [
 • Provide, operate, and improve the Aura Wardrobe service.
 • Power AI outfit suggestions, style recommendations, and clothing analysis.
 • Personalize your experience based on your wardrobe and preferences.
-• Send service‑related notifications (if enabled).
+• Send service-related notifications (if enabled).
 • Respond to support requests and feedback.
 • Monitor app performance and diagnose technical issues.
 
@@ -57,7 +57,7 @@ Authentication is handled by Clerk, which meets SOC 2 Type II compliance standar
 • Clerk — authentication and identity management.
 • OpenAI (via Replit AI Integrations) — AI clothing analysis and outfit generation. Images are processed and not stored by OpenAI beyond the request lifecycle per their API data policy.
 • Neon.tech — secure PostgreSQL database for conversation history.
-• Open‑Meteo — anonymous weather API requests (no personal data sent).
+• Open-Meteo — anonymous weather API requests (no personal data sent).
 
 We do not share your data with advertisers or data brokers.`,
   },
@@ -66,8 +66,8 @@ We do not share your data with advertisers or data brokers.`,
     body: `You have the right to delete your data at any time:
 
 • Go to Profile → Delete Account to permanently erase all local wardrobe data and your Clerk account.
-• To request deletion of server‑side conversation data, email privacy@aurawardrobe.app.
-• We will fulfill server‑side deletion requests within 30 days.
+• To request deletion of server-side conversation data, email privacy@aurawardrobe.app.
+• We will fulfill server-side deletion requests within 30 days.
 
 Apple App Store policy requires that apps with accounts support account deletion, and we comply fully.`,
   },
@@ -78,7 +78,7 @@ Apple App Store policy requires that apps with accounts support account deletion
 • Right to Access — request a copy of your personal data.
 • Right to Rectification — correct inaccurate data.
 • Right to Erasure — request deletion of your data ("right to be forgotten").
-• Right to Portability — export your data in a machine‑readable format (use the Export Wardrobe feature).
+• Right to Portability — export your data in a machine-readable format (use the Export Wardrobe feature).
 • Right to Object — opt out of certain processing activities.
 • California residents (CCPA) — right to know, right to delete, and right to opt out of sale (we do not sell data).
 
@@ -90,10 +90,10 @@ To exercise these rights, contact us at privacy@aurawardrobe.app.`,
   },
   {
     heading: "8. Security",
-    body: `We implement industry‑standard security measures including:
+    body: `We implement industry-standard security measures including:
 
 • HTTPS / TLS encryption for all network communications.
-• Clerk's enterprise‑grade authentication with multi‑factor authentication support.
+• Clerk's enterprise-grade authentication with multi-factor authentication support.
 • Database encryption at rest (Neon.tech).
 • No storage of raw payment information.
 
@@ -101,7 +101,7 @@ While we strive to protect your data, no method of transmission over the interne
   },
   {
     heading: "9. Changes to This Policy",
-    body: `We may update this Privacy Policy from time to time. We will notify you of significant changes by updating the "Last updated" date at the top of this page and, where appropriate, via in‑app notification. Continued use of the app after changes constitutes acceptance.`,
+    body: `We may update this Privacy Policy from time to time. We will notify you of significant changes by updating the "Last updated" date at the top of this page and, where appropriate, via in-app notification. Continued use of the app after changes constitutes acceptance.`,
   },
   {
     heading: "10. Contact Us",

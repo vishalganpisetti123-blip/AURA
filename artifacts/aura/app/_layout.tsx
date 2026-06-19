@@ -46,6 +46,22 @@ function RootLayoutNav() {
         name="analytics"
         options={{ headerShown: false, presentation: "modal" }}
       />
+      <Stack.Screen
+        name="privacy-policy"
+        options={{ headerShown: false, presentation: "card" }}
+      />
+      <Stack.Screen
+        name="terms"
+        options={{ headerShown: false, presentation: "card" }}
+      />
+      <Stack.Screen
+        name="contact"
+        options={{ headerShown: false, presentation: "card" }}
+      />
+      <Stack.Screen
+        name="about"
+        options={{ headerShown: false, presentation: "card" }}
+      />
     </Stack>
   );
 }

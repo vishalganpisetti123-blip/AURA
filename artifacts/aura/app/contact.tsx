@@ -225,7 +225,7 @@ export default function ContactScreen() {
             </Text>
           </Pressable>
           <Text style={[styles.sendNote, { color: colors.mutedForeground }]}>
-            Opens your default mail app with the message pre‑filled.
+            Opens your default mail app with the message pre-filled.
           </Text>
         </View>
       </ScrollView>

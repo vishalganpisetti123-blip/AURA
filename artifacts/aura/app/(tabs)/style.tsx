@@ -894,7 +894,7 @@ export default function PlannerScreen() {
                   <View
                     style={[styles.auraAvatar, { backgroundColor: colors.primary + "22" }]}
                   >
-                    <Text style={{ fontSize: 12 }}>✦</Text>
+                    <Feather name="star" size={12} color={colors.primary} />
                   </View>
                 )}
                 <View

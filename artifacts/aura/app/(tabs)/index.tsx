@@ -276,7 +276,7 @@ export default function HomeScreen() {
           >
             <View style={styles.ctaLeft}>
               <View style={[styles.ctaIconWrap, { backgroundColor: colors.accent + "22" }]}>
-                <Text style={styles.ctaIcon}>✦</Text>
+                <Feather name="star" size={18} color={colors.accent} />
               </View>
               <View>
                 <Text style={styles.ctaTitle}>Generate Today's Outfit</Text>
@@ -692,7 +692,7 @@ const styles = StyleSheet.create({
   },
   ctaLeft: { flexDirection: "row", alignItems: "center", gap: 14 },
   ctaIconWrap: { width: 44, height: 44, borderRadius: 14, alignItems: "center", justifyContent: "center" },
-  ctaIcon: { fontSize: 20, color: "#C9AA82" },
+  ctaIcon: { fontSize: 20 },
   ctaTitle: { fontSize: 16, fontFamily: "Inter_700Bold", color: "#fff" },
   ctaSub: { fontSize: 12, fontFamily: "Inter_400Regular", color: "rgba(255,255,255,0.5)", marginTop: 2 },
 
