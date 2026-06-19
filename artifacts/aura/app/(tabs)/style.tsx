@@ -344,10 +344,7 @@ export default function PlannerScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
       <View style={[styles.header, { paddingTop: topPad }]}>
-        <View style={styles.headerLeft}>
-          <Text style={[styles.logoText, { color: colors.primary }]}>✦</Text>
-          <Text style={[styles.headerTitle, { color: colors.foreground }]}>Planner</Text>
-        </View>
+        <Text style={[styles.headerTitle, { color: colors.foreground }]}>Planner</Text>
         <Pressable
           onPress={handleProfile}
           style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
@@ -996,9 +993,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 12,
   },
-  headerLeft: { flexDirection: "row", alignItems: "center", gap: 8 },
-  logoText: { fontSize: 16 },
-  headerTitle: { fontSize: 22, fontFamily: "Inter_700Bold" },
+  headerTitle: { fontSize: 34, fontFamily: "Inter_700Bold", letterSpacing: -1 },
   avatar: { width: 36, height: 36, borderRadius: 18 },
   avatarFallback: {
     height: 36,

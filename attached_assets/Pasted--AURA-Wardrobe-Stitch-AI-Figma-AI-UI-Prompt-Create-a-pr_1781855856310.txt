@@ -1,0 +1,503 @@
+# AURA Wardrobe — Stitch AI / Figma AI UI Prompt
+
+Create a premium cross-platform mobile app UI called **AURA Wardrobe** for both **iOS and Android**.
+
+The app is an AI-powered digital wardrobe and personal stylist that helps users scan clothes, organize their wardrobe, generate outfits, manage laundry, and receive AI styling recommendations.
+
+The design should feel like:
+
+* Apple Human Interface Design
+* Arc Browser aesthetics
+* Pinterest editorial layouts
+* Luxury fashion brands
+* Minimal Scandinavian design
+
+Avoid:
+
+* Neon colors
+* Cyberpunk themes
+* RGB lighting
+* Gaming-style UI
+* Bright gradients
+* Overly colorful interfaces
+
+The UI should feel:
+
+* Premium
+* Calm
+* Elegant
+* Fashion-forward
+* Intelligent
+* Minimal
+* Luxury
+
+---
+
+# DESIGN SYSTEM
+
+Use:
+
+* Black & White Monochrome Theme
+* Light Mode
+* Dark Mode
+* Frosted Glass
+* Liquid Glass Effects
+* Soft Blur
+* Thin Borders
+* Rounded Corners (20-28px)
+* Soft Shadows
+* Floating Cards
+* High-End Typography
+* Editorial Spacing
+
+The ONLY colors in the app should come from:
+
+* Clothing images
+* Outfit previews
+* Fashion photography
+
+The UI itself remains neutral.
+
+---
+
+# UNIQUE DESIGN LANGUAGE
+
+Introduce a subtle **Dot Matrix Fashion System**.
+
+Use tiny dot-matrix patterns for:
+
+* Loading states
+* Section dividers
+* Scan animations
+* Outfit generation indicators
+* Notification badges
+
+Keep it subtle.
+
+Do NOT make it look like Nothing OS.
+
+---
+
+# SPLASH SCREEN
+
+Minimal luxury fashion intro.
+
+Include:
+
+* AURA Wardrobe logo
+* Soft blur animation
+* Floating clothing silhouette
+* Monochrome background
+
+Tagline:
+
+"Your Personal AI Stylist"
+
+Duration:
+1.5 seconds max.
+
+---
+
+# LOGIN SCREEN
+
+Elegant centered layout.
+
+Options:
+
+* Continue with Apple
+* Continue with Google
+* Continue as Guest
+
+Use:
+
+* Glass buttons
+* Soft blur
+* Floating fashion imagery
+* Large typography
+
+Background:
+Subtle fashion editorial photography blurred heavily.
+
+---
+
+# HOME SCREEN
+
+The first screen after login.
+
+Show:
+
+## Greeting
+
+Good Morning, Vishal
+
+Today's Style Score
+
+Wardrobe Health Score
+
+---
+
+## Cards
+
+* Today's Outfit
+* Weather Recommendation
+* Laundry Reminder
+* Recently Added Clothes
+* Capsule Wardrobe Suggestions
+* AI Styling Tip
+
+Use:
+
+* Floating Glass Cards
+* Smooth shadows
+* Dynamic blur
+
+---
+
+# BOTTOM NAVIGATION
+
+Create floating liquid glass tab bar.
+
+Tabs:
+
+🏠 Home
+
+👕 Wardrobe
+
+✨ AI Outfits
+
+🧺 Laundry
+
+📅 Planner
+
+👤 Profile
+
+Use:
+Apple-style animations.
+
+---
+
+# WARDROBE SCREEN
+
+This is the main feature.
+
+Create:
+
+Pinterest-style clothing grid.
+
+Each clothing card contains:
+
+* Clothing image
+* Brand
+* Category
+* Color tags
+* Last worn
+* Favorite icon
+
+Use:
+
+* Masonry layout
+* Smooth zoom transitions
+* Floating image cards
+
+---
+
+# CLOTHING DETAILS PAGE
+
+When a clothing item is opened:
+
+Show:
+
+Large clothing image
+
+Brand
+
+Category
+
+Season
+
+Occasion
+
+Wear count
+
+AI tags
+
+Last worn
+
+Favorite toggle
+
+Buttons:
+
+Edit
+
+Move to Laundry
+
+Delete
+
+---
+
+# AI SCAN SCREEN
+
+Most important feature.
+
+Create a beautiful camera UI.
+
+Include:
+
+Live camera feed
+
+Scanning frame
+
+AI detection animation
+
+Clothing outline recognition
+
+Background removal preview
+
+Detected tags:
+
+* Category
+* Brand
+* Color
+* Fabric
+* Style
+
+Use:
+
+* Liquid glass overlays
+* Dot matrix scanning animation
+
+The scan experience should feel futuristic but minimal.
+
+---
+
+# AI OUTFITS SCREEN
+
+Premium editorial outfit generation.
+
+Show:
+
+Large outfit cards
+
+Full outfit preview
+
+Confidence score
+
+Why it works
+
+Weather compatibility
+
+Occasion compatibility
+
+Suggested shoes
+
+Suggested accessories
+
+Buttons:
+
+Save Outfit
+
+Favorite
+
+Regenerate
+
+Share
+
+---
+
+# OUTFIT GENERATION ANIMATION
+
+When generating:
+
+Use:
+
+* Floating cards
+* Clothing pieces assembling
+* Soft blur transitions
+* AI styling animation
+
+Think:
+
+Apple Vision Pro quality motion.
+
+---
+
+# LAUNDRY SCREEN
+
+Luxury laundry management.
+
+Sections:
+
+Currently Wearing
+
+Laundry Basket
+
+Recently Washed
+
+Buttons:
+
+Mark Worn
+
+Wash Item
+
+Wash All
+
+Reset Laundry
+
+Items should animate smoothly:
+
+Wardrobe → Laundry
+
+Laundry → Wardrobe
+
+with fluid transitions.
+
+---
+
+# PLANNER SCREEN
+
+Fashion calendar.
+
+Include:
+
+Weekly Planner
+
+Monthly Planner
+
+Trip Packing Planner
+
+Drag-and-drop outfit scheduling.
+
+Use:
+
+* Calendar cards
+* Floating outfit previews
+* Elegant scheduling UI
+
+---
+
+# AI STYLIST CHAT
+
+Create a luxury AI assistant experience.
+
+Chat should feel like:
+
+Personal fashion consultant.
+
+Questions:
+
+"What should I wear today?"
+
+"What matches these sneakers?"
+
+"Help me pack for Goa."
+
+The UI should be:
+
+* Minimal
+* Conversational
+* Elegant
+
+No chatbot aesthetics.
+
+---
+
+# PROFILE SCREEN
+
+Include:
+
+Profile photo
+
+Style preferences
+
+Theme settings
+
+Notification settings
+
+Privacy controls
+
+Wardrobe statistics
+
+Fashion personality
+
+Style evolution
+
+---
+
+# ANALYTICS SCREEN
+
+Create beautiful fashion insights.
+
+Show:
+
+Most Worn Clothes
+
+Least Worn Clothes
+
+Wardrobe Value
+
+Style Breakdown
+
+Color Usage
+
+Season Usage
+
+Use:
+
+Minimal charts
+
+Monochrome graphs
+
+Editorial dashboard layouts
+
+---
+
+# ANIMATIONS
+
+Use:
+
+* Liquid transitions
+* Shared element animations
+* Elastic scrolling
+* Smooth card expansion
+* Dynamic blur
+* Spring physics
+
+Everything should feel:
+
+* Premium
+* Expensive
+* Smooth
+
+---
+
+# TYPOGRAPHY
+
+Use:
+
+Large Editorial Headlines
+
+Minimal Secondary Text
+
+Luxury Fashion Magazine Layouts
+
+Think:
+
+Vogue + Apple
+
+---
+
+# FINAL DESIGN FEEL
+
+The final UI should feel like:
+
+**Pinterest + Apple + Arc Browser + Luxury Fashion Editorial**
+
+A user should feel like they're using a **$10/month premium AI fashion assistant**, not a generic wardrobe app.
+
+The experience should be:
+
+* Elegant
+* Intelligent
+* Minimal
+* Fashion-focused
+* Beautiful in both Light Mode and Dark Mode.

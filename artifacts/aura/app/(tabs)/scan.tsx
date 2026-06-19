@@ -189,27 +189,46 @@ export default function ScanScreen() {
         {/* STEP: Pick */}
         {step === "pick" && (
           <View style={styles.pickStep}>
-            <View
-              style={[styles.illustrationCircle, { backgroundColor: colors.muted }]}
-            >
-              <Feather name="camera" size={64} color={colors.mutedForeground} />
+            {/* Dot-matrix scan frame */}
+            <View style={[styles.scanFrame, { borderColor: colors.border }]}>
+              {/* Corner brackets */}
+              <View style={[styles.corner, styles.cornerTL, { borderColor: colors.foreground }]} />
+              <View style={[styles.corner, styles.cornerTR, { borderColor: colors.foreground }]} />
+              <View style={[styles.corner, styles.cornerBL, { borderColor: colors.foreground }]} />
+              <View style={[styles.corner, styles.cornerBR, { borderColor: colors.foreground }]} />
+              {/* Dot matrix pattern */}
+              <View style={styles.dotGrid}>
+                {Array.from({ length: 48 }).map((_, i) => (
+                  <View
+                    key={i}
+                    style={[styles.dot, { backgroundColor: colors.mutedForeground, opacity: Math.random() > 0.5 ? 0.25 : 0.1 }]}
+                  />
+                ))}
+              </View>
+              <View style={[styles.scanIconWrap, { backgroundColor: colors.background }]}>
+                <Feather name="camera" size={48} color={colors.foreground} />
+              </View>
             </View>
-            <Text style={[styles.pickTitle, { color: colors.foreground }]}>
-              {successCount > 0 ? "Add Another Item" : "Scan Your Clothing"}
-            </Text>
-            <Text style={[styles.pickSub, { color: colors.mutedForeground }]}>
-              Take a photo or choose from your library. AI will catalog the item automatically.
-            </Text>
+
+            <View style={styles.pickTextBlock}>
+              <Text style={[styles.pickTitle, { color: colors.foreground }]}>
+                {successCount > 0 ? "Add Another Piece" : "Scan Your Clothing"}
+              </Text>
+              <Text style={[styles.pickSub, { color: colors.mutedForeground }]}>
+                AI identifies category, color, brand, fabric, and style automatically.
+              </Text>
+            </View>
+
             <Pressable
               onPress={() => pickImage(true)}
               style={({ pressed }) => [
                 styles.bigBtn,
-                { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 },
+                { backgroundColor: colors.foreground, opacity: pressed ? 0.85 : 1 },
               ]}
             >
-              <Feather name="camera" size={20} color={colors.primaryForeground} />
-              <Text style={[styles.bigBtnText, { color: colors.primaryForeground }]}>
-                Take a Photo
+              <Feather name="camera" size={20} color={colors.background} />
+              <Text style={[styles.bigBtnText, { color: colors.background }]}>
+                Open Camera
               </Text>
             </Pressable>
             <Pressable
@@ -229,6 +248,22 @@ export default function ScanScreen() {
                 Choose from Library
               </Text>
             </Pressable>
+
+            {/* How it works */}
+            <View style={[styles.howItWorks, { borderColor: colors.border }]}>
+              {[
+                { icon: "camera", label: "Photograph any clothing item" },
+                { icon: "cpu", label: "AI detects category, color & brand" },
+                { icon: "plus-circle", label: "Saved to your personal closet" },
+              ].map((step, i) => (
+                <View key={i} style={styles.howStep}>
+                  <View style={[styles.howNum, { backgroundColor: colors.secondary }]}>
+                    <Text style={[styles.howNumText, { color: colors.mutedForeground }]}>{i + 1}</Text>
+                  </View>
+                  <Text style={[styles.howLabel, { color: colors.mutedForeground }]}>{step.label}</Text>
+                </View>
+              ))}
+            </View>
           </View>
         )}
 
@@ -448,18 +483,42 @@ const styles = StyleSheet.create({
 
   // Pick step
   pickStep: { alignItems: "center", gap: 20, paddingTop: 20 },
-  illustrationCircle: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+  scanFrame: {
+    width: 220,
+    height: 220,
+    borderRadius: 24,
+    borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
+    overflow: "hidden",
+    position: "relative",
+    marginBottom: 4,
   },
+  dotGrid: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    padding: 12,
+    gap: 10,
+    alignContent: "flex-start",
+  },
+  dot: { width: 3, height: 3, borderRadius: 1.5 },
+  scanIconWrap: { width: 88, height: 88, borderRadius: 44, alignItems: "center", justifyContent: "center" },
+  corner: { position: "absolute", width: 18, height: 18, borderWidth: 2 },
+  cornerTL: { top: 8, left: 8, borderRightWidth: 0, borderBottomWidth: 0, borderTopLeftRadius: 6 },
+  cornerTR: { top: 8, right: 8, borderLeftWidth: 0, borderBottomWidth: 0, borderTopRightRadius: 6 },
+  cornerBL: { bottom: 8, left: 8, borderRightWidth: 0, borderTopWidth: 0, borderBottomLeftRadius: 6 },
+  cornerBR: { bottom: 8, right: 8, borderLeftWidth: 0, borderTopWidth: 0, borderBottomRightRadius: 6 },
+  pickTextBlock: { alignItems: "center", gap: 8 },
   pickTitle: {
-    fontSize: 24,
+    fontSize: 26,
     fontFamily: "Inter_700Bold",
     textAlign: "center",
+    letterSpacing: -0.5,
   },
   pickSub: {
     fontSize: 14,
@@ -468,6 +527,11 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     paddingHorizontal: 16,
   },
+  howItWorks: { width: "100%", borderWidth: 1, borderRadius: 18, padding: 16, gap: 12, marginTop: 4 },
+  howStep: { flexDirection: "row", alignItems: "center", gap: 12 },
+  howNum: { width: 26, height: 26, borderRadius: 13, alignItems: "center", justifyContent: "center" },
+  howNumText: { fontSize: 11, fontFamily: "Inter_700Bold" },
+  howLabel: { fontSize: 13, fontFamily: "Inter_400Regular", flex: 1 },
   bigBtn: {
     flexDirection: "row",
     alignItems: "center",

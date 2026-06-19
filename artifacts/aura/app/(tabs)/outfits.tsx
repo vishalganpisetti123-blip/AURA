@@ -124,8 +124,10 @@ export default function ClosetScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
       <View style={[styles.header, { paddingTop: topPad }]}>
-        <View style={styles.headerLeft}>
-          <Text style={[styles.logoText, { color: colors.primary }]}>✦</Text>
+        <View>
+          <Text style={[styles.headerEyebrow, { color: colors.mutedForeground }]}>
+            {items.length} {items.length === 1 ? "piece" : "pieces"}
+          </Text>
           <Text style={[styles.headerTitle, { color: colors.foreground }]}>Closet</Text>
         </View>
         <Pressable
@@ -384,9 +386,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 12,
   },
-  headerLeft: { flexDirection: "row", alignItems: "center", gap: 8 },
-  logoText: { fontSize: 16 },
-  headerTitle: { fontSize: 22, fontFamily: "Inter_700Bold" },
+  headerEyebrow: { fontSize: 12, fontFamily: "Inter_400Regular", letterSpacing: 0.3, marginBottom: 2 },
+  headerTitle: { fontSize: 34, fontFamily: "Inter_700Bold", letterSpacing: -1 },
   avatar: { width: 36, height: 36, borderRadius: 18 },
   avatarFallback: {
     height: 36,
@@ -444,8 +445,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   scanBtnText: { fontSize: 14, fontFamily: "Inter_600SemiBold" },
-  card: { width: "48%", borderRadius: 18, borderWidth: 1, overflow: "hidden" },
-  cardImgWrap: { width: "100%", height: 180, position: "relative" },
+  card: { width: "48%", borderRadius: 22, borderWidth: 1, overflow: "hidden" },
+  cardImgWrap: { width: "100%", height: 220, position: "relative" },
   cardImg: { width: "100%", height: "100%" },
   cardImgPlaceholder: {
     width: "100%",

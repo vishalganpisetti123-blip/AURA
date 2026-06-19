@@ -4,8 +4,16 @@ import { Tabs } from "expo-router";
 import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import { SymbolView } from "expo-symbols";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import React from "react";
-import { Platform, StyleSheet, View, useColorScheme } from "react-native";
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  useColorScheme,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 
@@ -36,111 +44,169 @@ function NativeTabLayout() {
   );
 }
 
-function ClassicTabLayout() {
+const TAB_ROUTES = [
+  { name: "index", label: "Home", icon: "home" as const },
+  { name: "scan", label: "Scan", icon: "camera" as const },
+  { name: "outfits", label: "Closet", icon: "grid" as const },
+  { name: "style", label: "Planner", icon: "calendar" as const },
+  { name: "plan", label: "Laundry", icon: "droplet" as const },
+];
+
+function FloatingTabBar({ state, navigation }: any) {
   const colors = useColors();
-  const colorScheme = useColorScheme();
-  const safeAreaInsets = useSafeAreaInsets();
-  const isDark = colorScheme === "dark";
-  const isIOS = Platform.OS === "ios";
+  const insets = useSafeAreaInsets();
+  const isDark = useColorScheme() === "dark";
   const isWeb = Platform.OS === "web";
 
+  const bottom = isWeb ? 20 : Math.max(insets.bottom, 16);
+  const isScanCenter = (idx: number) => TAB_ROUTES[idx]?.name === "scan";
+
+  return (
+    <View style={[styles.floatWrap, { bottom }]}>
+      <BlurView
+        intensity={isWeb ? 0 : 75}
+        tint={isDark ? "systemChromeMaterialDark" : "systemChromeMaterial"}
+        style={[
+          styles.floatBlur,
+          {
+            backgroundColor: isWeb
+              ? isDark
+                ? "rgba(18,18,18,0.96)"
+                : "rgba(248,248,248,0.96)"
+              : undefined,
+            borderColor: isDark
+              ? "rgba(255,255,255,0.09)"
+              : "rgba(0,0,0,0.08)",
+          },
+        ]}
+      >
+        <View style={styles.floatInner}>
+          {state.routes.map((route: any, idx: number) => {
+            const focused = state.index === idx;
+            const tabInfo = TAB_ROUTES[idx];
+            const isCenter = isScanCenter(idx);
+
+            const onPress = () => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              const event = navigation.emit({
+                type: "tabPress",
+                target: route.key,
+                canPreventDefault: true,
+              });
+              if (!focused && !event.defaultPrevented) {
+                navigation.navigate(route.name, route.params);
+              }
+            };
+
+            if (isCenter) {
+              return (
+                <Pressable
+                  key={route.key}
+                  onPress={onPress}
+                  style={({ pressed }) => [
+                    styles.tabCenter,
+                    { opacity: pressed ? 0.85 : 1 },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.tabCenterCircle,
+                      {
+                        backgroundColor: colors.foreground,
+                        shadowColor: colors.foreground,
+                        shadowOpacity: 0.25,
+                        shadowRadius: 12,
+                        shadowOffset: { width: 0, height: 4 },
+                        elevation: 8,
+                      },
+                    ]}
+                  >
+                    <Feather
+                      name={tabInfo.icon}
+                      size={22}
+                      color={colors.background}
+                    />
+                  </View>
+                  <Text
+                    style={[
+                      styles.tabLabel,
+                      {
+                        color: focused
+                          ? colors.foreground
+                          : colors.mutedForeground,
+                        fontFamily: focused
+                          ? "Inter_600SemiBold"
+                          : "Inter_400Regular",
+                      },
+                    ]}
+                  >
+                    {tabInfo.label}
+                  </Text>
+                </Pressable>
+              );
+            }
+
+            return (
+              <Pressable
+                key={route.key}
+                onPress={onPress}
+                style={({ pressed }) => [
+                  styles.tab,
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
+              >
+                {focused && (
+                  <View
+                    style={[
+                      styles.activeIndicator,
+                      {
+                        backgroundColor: isDark
+                          ? "rgba(255,255,255,0.10)"
+                          : "rgba(0,0,0,0.07)",
+                      },
+                    ]}
+                  />
+                )}
+                <Feather
+                  name={tabInfo.icon}
+                  size={22}
+                  color={focused ? colors.foreground : colors.mutedForeground}
+                />
+                <Text
+                  style={[
+                    styles.tabLabel,
+                    {
+                      color: focused
+                        ? colors.foreground
+                        : colors.mutedForeground,
+                      fontFamily: focused
+                        ? "Inter_600SemiBold"
+                        : "Inter_400Regular",
+                    },
+                  ]}
+                >
+                  {tabInfo.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </BlurView>
+    </View>
+  );
+}
+
+function ClassicTabLayout() {
   return (
     <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.mutedForeground,
-        tabBarStyle: {
-          position: "absolute",
-          backgroundColor: isIOS ? "transparent" : colors.background,
-          borderTopWidth: isWeb ? 1 : 0,
-          borderTopColor: colors.border,
-          elevation: 0,
-          paddingBottom: isWeb ? 0 : safeAreaInsets.bottom,
-          ...(isWeb ? { height: 60 } : {}),
-        },
-        tabBarBackground: () =>
-          isIOS ? (
-            <BlurView
-              intensity={100}
-              tint={isDark ? "dark" : "light"}
-              style={StyleSheet.absoluteFill}
-            />
-          ) : isWeb ? (
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                { backgroundColor: colors.background, borderTopColor: colors.border, borderTopWidth: 1 },
-              ]}
-            />
-          ) : null,
-        tabBarLabelStyle: {
-          fontSize: 10,
-          fontFamily: "Inter_500Medium",
-          marginBottom: 2,
-        },
-      }}
+      screenOptions={{ headerShown: false }}
+      tabBar={(props) => <FloatingTabBar {...props} />}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) =>
-            isIOS ? (
-              <SymbolView name="house.fill" tintColor={color} size={22} />
-            ) : (
-              <Feather name="home" size={22} color={color} />
-            ),
-        }}
-      />
-      <Tabs.Screen
-        name="scan"
-        options={{
-          title: "Scan",
-          tabBarIcon: ({ color }) =>
-            isIOS ? (
-              <SymbolView name="camera.fill" tintColor={color} size={22} />
-            ) : (
-              <Feather name="camera" size={22} color={color} />
-            ),
-        }}
-      />
-      <Tabs.Screen
-        name="outfits"
-        options={{
-          title: "Closet",
-          tabBarIcon: ({ color }) =>
-            isIOS ? (
-              <SymbolView name="tshirt.fill" tintColor={color} size={22} />
-            ) : (
-              <Feather name="grid" size={22} color={color} />
-            ),
-        }}
-      />
-      <Tabs.Screen
-        name="style"
-        options={{
-          title: "Planner",
-          tabBarIcon: ({ color }) =>
-            isIOS ? (
-              <SymbolView name="calendar" tintColor={color} size={22} />
-            ) : (
-              <Feather name="calendar" size={22} color={color} />
-            ),
-        }}
-      />
-      <Tabs.Screen
-        name="plan"
-        options={{
-          title: "Laundry",
-          tabBarIcon: ({ color }) =>
-            isIOS ? (
-              <SymbolView name="washer" tintColor={color} size={22} />
-            ) : (
-              <Feather name="droplet" size={22} color={color} />
-            ),
-        }}
-      />
+      <Tabs.Screen name="index" options={{ title: "Home" }} />
+      <Tabs.Screen name="scan" options={{ title: "Scan" }} />
+      <Tabs.Screen name="outfits" options={{ title: "Closet" }} />
+      <Tabs.Screen name="style" options={{ title: "Planner" }} />
+      <Tabs.Screen name="plan" options={{ title: "Laundry" }} />
     </Tabs>
   );
 }
@@ -151,3 +217,64 @@ export default function TabLayout() {
   }
   return <ClassicTabLayout />;
 }
+
+const styles = StyleSheet.create({
+  floatWrap: {
+    position: "absolute",
+    left: 16,
+    right: 16,
+    zIndex: 100,
+  },
+  floatBlur: {
+    borderRadius: 32,
+    borderWidth: 1,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.14,
+    shadowRadius: 28,
+    elevation: 16,
+  },
+  floatInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 10,
+    gap: 4,
+  },
+  tab: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    paddingVertical: 6,
+    borderRadius: 22,
+    position: "relative",
+  },
+  activeIndicator: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 22,
+  },
+  tabCenter: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    paddingVertical: 4,
+  },
+  tabCenterCircle: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: -14,
+  },
+  tabLabel: {
+    fontSize: 9,
+  },
+});

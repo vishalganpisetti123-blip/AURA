@@ -49,8 +49,10 @@ export default function LaundryScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
       <View style={[styles.header, { paddingTop: topPad }]}>
-        <View style={styles.headerLeft}>
-          <Text style={[styles.logoText, { color: colors.primary }]}>✦</Text>
+        <View>
+          <Text style={[styles.headerEyebrow, { color: colors.mutedForeground }]}>
+            {laundryItems.length} {laundryItems.length === 1 ? "item" : "items"} in wash
+          </Text>
           <Text style={[styles.headerTitle, { color: colors.foreground }]}>Laundry</Text>
         </View>
         <Pressable onPress={handleProfile} style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}>
@@ -71,17 +73,12 @@ export default function LaundryScreen() {
         </Pressable>
       </View>
 
-      {/* Count + Reset */}
-      <View style={styles.subHeader}>
-        <View>
-          <Text style={[styles.countTitle, { color: colors.foreground }]}>
-            {laundryItems.length} {laundryItems.length === 1 ? "item" : "items"} in wash
-          </Text>
+      {/* Return All */}
+      {laundryItems.length > 0 && (
+        <View style={styles.subHeader}>
           <Text style={[styles.countSub, { color: colors.mutedForeground }]}>
             Items return to your closet after washing
           </Text>
-        </View>
-        {laundryItems.length > 0 && (
           <Pressable
             onPress={handleReset}
             style={({ pressed }) => [
@@ -92,8 +89,8 @@ export default function LaundryScreen() {
             <Feather name="refresh-cw" size={14} color={colors.primaryForeground} />
             <Text style={[styles.resetText, { color: colors.primaryForeground }]}>Return All</Text>
           </Pressable>
-        )}
-      </View>
+        </View>
+      )}
 
       {laundryItems.length === 0 ? (
         <View style={styles.emptyState}>
@@ -192,10 +189,9 @@ function LaundryCard({
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, paddingBottom: 8 },
-  headerLeft: { flexDirection: "row", alignItems: "center", gap: 8 },
-  logoText: { fontSize: 16 },
-  headerTitle: { fontSize: 22, fontFamily: "Inter_700Bold" },
+  header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, paddingBottom: 12 },
+  headerEyebrow: { fontSize: 12, fontFamily: "Inter_400Regular", letterSpacing: 0.3, marginBottom: 2 },
+  headerTitle: { fontSize: 34, fontFamily: "Inter_700Bold", letterSpacing: -1 },
   avatar: { width: 36, height: 36, borderRadius: 18 },
   avatarFallback: { height: 36, minWidth: 36, borderRadius: 18, borderWidth: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 8 },
   avatarInitials: { fontSize: 14, fontFamily: "Inter_600SemiBold" },
